@@ -1,0 +1,194 @@
+Essential Express Dependencies
+Core
+npm install express cors dotenv
+npm install helmet compression
+npm install cookie-parser
+npm install morgan
+Database
+npm install prisma @prisma/client
+npm install pg
+
+Initialize:
+
+npx prisma init
+Authentication
+npm install jsonwebtoken
+npm install bcryptjs
+npm install passport
+npm install passport-google-oauth20
+npm install passport-github2
+
+Types:
+
+npm install -D @types/jsonwebtoken
+npm install -D @types/bcryptjs
+Validation
+
+Instead of Joi, I'd use Zod everywhere.
+
+npm install zod
+
+Shared validation schemas can be used in:
+
+Next.js
+React Native
+Express
+File Uploads
+npm install multer
+npm install cloudinary
+npm install multer-storage-cloudinary
+
+Upload flow:
+
+Client
+ ↓
+Express
+ ↓
+Cloudinary
+ ↓
+Store URL in PostgreSQL
+Redis
+npm install redis
+
+Use for:
+
+OTP
+Sessions
+Caching
+Rate Limits
+BullMQ
+Queue System
+npm install bullmq
+
+Use for:
+
+Email sending
+Notifications
+Report generation
+Video processing
+
+Architecture:
+
+API
+ ↓
+Queue
+ ↓
+Worker
+Rate Limiting
+npm install express-rate-limit
+
+For auth endpoints:
+
+/login
+/register
+/forgot-password
+Security
+npm install helmet
+npm install xss-clean
+npm install express-mongo-sanitize
+
+Even with PostgreSQL, sanitization is useful.
+
+API Documentation
+npm install swagger-ui-express
+npm install swagger-jsdoc
+
+Access:
+
+/api/docs
+Logging
+npm install pino
+npm install pino-http
+
+Avoid Morgan in production once Pino is configured.
+
+Email
+npm install resend
+
+Examples:
+
+OTP
+Verification
+Password Reset
+Invoices
+Payments
+npm install stripe
+npm install razorpay
+
+Always verify payment signatures and rely on webhooks.
+
+Realtime
+npm install socket.io
+
+Useful for:
+
+Chat
+Notifications
+Live tracking
+Presence
+Monitoring
+npm install @sentry/node
+npm install @sentry/profiling-node
+
+Track:
+
+Errors
+Performance
+API Latency
+Testing
+npm install -D jest
+npm install -D supertest
+npm install -D ts-jest
+Development
+npm install -D nodemon
+npm install -D ts-node
+npm install -D typescript
+npm install -D concurrently
+Environment Variables
+DATABASE_URL=
+
+JWT_ACCESS_SECRET=
+JWT_REFRESH_SECRET=
+
+REDIS_URL=
+
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=
+
+RESEND_API_KEY=
+
+SENTRY_DSN=
+
+POSTHOG_KEY=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+What I'd Build in 2026 with Express
+Monorepo (Turborepo)
+
+apps/
+├── web          (Next.js)
+├── mobile       (Expo)
+└── api          (Express + TS)
+
+packages/
+├── ui
+├── types
+├── validation
+└── utils
+
+Infrastructure
+├── PostgreSQL
+├── Redis
+├── Cloudinary
+├── S3 (optional)
+├── Cloudflare
+├── AWS
+└── GitHub Actions
