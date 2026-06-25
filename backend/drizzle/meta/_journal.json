@@ -8,6 +8,13 @@
       "when": 1782336404799,
       "tag": "0000_tricky_hex",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782421756549,
+      "tag": "0001_violet_magus",
+      "breakpoints": true
     }
   ]
 }

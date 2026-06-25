@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import "dotenv/config";
-import {db} from "./db/index";
-import { users } from "./db/schema";
+import {db} from "./db/index.js";
+import { users } from "./db/schema/index.js";
 
 const app = express();
 
@@ -16,9 +16,13 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 app.get("/users", async (_req: Request, res: Response) => {
-  const result = await db.select().from(users);
-
-  res.json(result);
+  try {
+    const result = await db.select().from(users);
+    res.json(result);
+  } catch (err) {
+    console.error("DB ERROR:", err);
+    res.status(500).json(err);
+  }
 });
 
 const PORT = 5000;
