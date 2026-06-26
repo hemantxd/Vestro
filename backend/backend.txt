@@ -1,0 +1,323 @@
+Authentication
+
+For a social media application:
+
+Access Token + Refresh Token
+
+Use:
+
+JWT Access Token (15 mins)
+Refresh Token (30 days)
+
+Store:
+
+refresh_tokens
+
+table in database.
+
+Access token:
+
+Authorization: Bearer token
+
+Refresh token:
+
+HttpOnly Cookie
+
+This is currently one of the most common architectures.
+
+Password Hashing
+
+Use:
+
+npm install argon2
+
+Instead of bcrypt.
+
+Argon2 is considered stronger and more modern.
+
+Security
+helmet
+cors
+express-rate-limit
+hpp
+cookie-parser
+Logging
+pino
+pino-http
+
+Much faster than Winston.
+
+Background Jobs
+bullmq
+redis
+
+Useful for:
+
+Notifications
+Email sending
+Video processing
+Feed generation
+File Uploads
+AWS S3
+
+Store only URLs in PostgreSQL.
+
+Realtime
+socket.io
+
+For:
+
+Chat
+Notifications
+Presence
+Typing indicators
+Folder Structure
+src/
+│
+├── app.ts
+├── server.ts
+│
+├── config/
+│   ├── env.ts
+│   ├── db.ts
+│   ├── redis.ts
+│   └── logger.ts
+│
+├── common/
+│   ├── constants/
+│   ├── enums/
+│   ├── errors/
+│   ├── types/
+│   ├── utils/
+│   └── helpers/
+│
+├── middleware/
+│   ├── auth.middleware.ts
+│   ├── validate.middleware.ts
+│   ├── error.middleware.ts
+│   ├── rateLimit.middleware.ts
+│   └── upload.middleware.ts
+│
+├── modules/
+│   │
+│   ├── auth/
+│   │   ├── auth.controller.ts
+│   │   ├── auth.service.ts
+│   │   ├── auth.repository.ts
+│   │   ├── auth.routes.ts
+│   │   ├── auth.schema.ts
+│   │   └── auth.types.ts
+│   │
+│   ├── users/
+│   │   ├── user.controller.ts
+│   │   ├── user.service.ts
+│   │   ├── user.repository.ts
+│   │   ├── user.routes.ts
+│   │   ├── user.schema.ts
+│   │   └── user.types.ts
+│   │
+│   ├── posts/
+│   ├── comments/
+│   ├── likes/
+│   ├── follows/
+│   ├── notifications/
+│   ├── messages/
+│   ├── search/
+│   └── admin/
+│
+├── db/
+│   ├── schema/
+│   │   ├── users.ts
+│   │   ├── posts.ts
+│   │   ├── comments.ts
+│   │   └── ...
+│   │
+│   ├── migrations/
+│   └── seed/
+│
+├── sockets/
+│   ├── chat.socket.ts
+│   ├── notification.socket.ts
+│   └── index.ts
+│
+├── jobs/
+│   ├── email.job.ts
+│   ├── notification.job.ts
+│   └── feed.job.ts
+│
+├── storage/
+│   ├── s3.ts
+│   └── upload.ts
+│
+└── routes/
+    └── index.ts
+Example Module Structure
+User Module
+users/
+│
+├── user.controller.ts
+├── user.service.ts
+├── user.repository.ts
+├── user.routes.ts
+├── user.schema.ts
+└── user.types.ts
+Controller
+
+Only HTTP logic.
+
+export const getProfile = async (
+ req: Request,
+ res: Response
+) => {
+ const user = await userService.getProfile(req.user.id);
+
+ res.json(user);
+};
+Service
+
+Business logic.
+
+export const getProfile = async (
+ userId: string
+) => {
+ return userRepository.findById(userId);
+};
+Repository
+
+Database only.
+
+export const findById = async (
+ id: string
+) => {
+ return db.query.users.findFirst({
+  where: eq(users.id, id)
+ });
+};
+Zod Validation
+export const registerSchema = z.object({
+ username: z.string().min(3),
+ email: z.email(),
+ password: z.string().min(8)
+});
+
+Middleware:
+
+validate(registerSchema)
+Environment Validation
+
+Never access process.env directly.
+
+const envSchema = z.object({
+ PORT: z.string(),
+ DATABASE_URL: z.string(),
+ JWT_SECRET: z.string(),
+ AWS_BUCKET: z.string()
+});
+
+export const env = envSchema.parse(process.env);
+Database Layer
+
+Drizzle structure:
+
+db/
+│
+├── schema/
+│   ├── users.ts
+│   ├── posts.ts
+│   ├── comments.ts
+│   └── follows.ts
+│
+├── migrations/
+└── index.ts
+Authentication Flow
+Login
+Email + Password
+        │
+        ▼
+ Verify Password
+        │
+        ▼
+ Generate Access Token
+        │
+        ▼
+ Generate Refresh Token
+        │
+        ▼
+ Save Refresh Token
+        │
+        ▼
+ Return Access Token
+Refresh
+Refresh Token
+      │
+      ▼
+Verify Token
+      │
+      ▼
+Issue New Access Token
+Common Tables
+users
+profiles
+posts
+post_media
+comments
+likes
+follows
+notifications
+conversations
+conversation_members
+messages
+message_reads
+refresh_tokens
+sessions
+reports
+hashtags
+bookmarks
+API Versioning
+/api/v1/auth
+/api/v1/users
+/api/v1/posts
+/api/v1/comments
+
+Future:
+
+/api/v2
+Error Handling
+
+Create a custom error class.
+
+throw new AppError(
+ "User not found",
+ 404
+);
+
+Global handler:
+
+app.use(errorHandler);
+Dependency Injection (Optional)
+
+For very large projects:
+
+tsyringe
+
+But for most social media apps, a clean Service → Repository pattern is enough.
+
+What I'd use if I were starting today
+Node.js
+Express
+TypeScript
+PostgreSQL
+Drizzle ORM
+Zod
+JWT
+Refresh Tokens
+Argon2
+Redis
+BullMQ
+Socket.io
+AWS S3
+Pino
+Helmet
+Rate Limiter
+Docker
+GitHub Actions
