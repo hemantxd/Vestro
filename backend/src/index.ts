@@ -1,32 +1,17 @@
-import express, { Request, Response } from "express";
-import cors from "cors";
 import "dotenv/config";
-import {db} from "./db/index.js";
-import { users } from "./db/schema/index.js";
+import app from "./app.js";
+import { env } from "./config/env.js";
+import { logger } from "./config/logger.js";
 
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-app.get("/", (_req: Request, res: Response) => {
-  res.json({
-    message: "Vestro Backend Running",
-  });
-});
-
-app.get("/users", async (_req: Request, res: Response) => {
+const start = async () => {
   try {
-    const result = await db.select().from(users);
-    res.json(result);
-  } catch (err) {
-    console.error("DB ERROR:", err);
-    res.status(500).json(err);
+    app.listen(env.PORT, () => {
+      logger.info(`Server running on port ${env.PORT} in ${env.NODE_ENV} mode`);
+    });
+  } catch (error) {
+    logger.error({ error }, "Failed to start server");
+    process.exit(1);
   }
-});
+};
 
-const PORT = 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+start();

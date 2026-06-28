@@ -11,3 +11,6 @@ out/
 
 # OS
 .DS_Store
+
+# Backend - user module code (not ready for public)
+backend/src/modules/users/
