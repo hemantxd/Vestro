@@ -14,6 +14,10 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().default("http://localhost:3000"),
 
   REDIS_URL: z.string().optional(),
+
+  CLOUDINARY_CLOUD_NAME: z.string(),
+  CLOUDINARY_API_KEY: z.string(),
+  CLOUDINARY_API_SECRET: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);

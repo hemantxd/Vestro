@@ -3,6 +3,7 @@ import argon2 from "argon2";
 import crypto from "crypto";
 import { env } from "../../config/env.js";
 import { authRepository } from "./auth.repository.js";
+import { userRepository } from "../users/user.repository.js";
 import { AppError } from "../../common/errors/AppError.js";
 import type { RegisterInput, LoginInput, AuthTokens } from "./auth.types.js";
 
@@ -22,10 +23,8 @@ export const authService = {
       throw new AppError("Username already taken", 409);
     }
 
-    // Hash password
     const passwordHash = await argon2.hash(password);
 
-    // Create user
     const user = await authRepository.createUser({
       username,
       email,
@@ -33,16 +32,13 @@ export const authService = {
       displayName: displayName || null,
     });
 
-    // Generate tokens
-    const tokens = await generateTokens(user.id, user.email, ip, userAgent);
-
+    const tokens = await generateTokens(user.id, user.email, user.username, ip, userAgent);
     return tokens;
   },
 
   async login(input: LoginInput, ip?: string, userAgent?: string): Promise<AuthTokens> {
     const { email, password } = input;
 
-    // Find user
     const user = await authRepository.findUserByEmail(email);
     if (!user) {
       throw new AppError("Invalid email or password", 401);
@@ -58,30 +54,34 @@ export const authService = {
       throw new AppError("Invalid email or password", 401);
     }
 
-    // Generate tokens
-    const tokens = await generateTokens(user.id, user.email, ip, userAgent);
-
+    const tokens = await generateTokens(user.id, user.email, user.username, ip, userAgent);
     return tokens;
   },
 
   async refreshTokens(refreshToken: string, ip?: string, userAgent?: string): Promise<AuthTokens> {
-    // Find session by refresh token
     const session = await authRepository.findSessionByRefreshToken(refreshToken);
     if (!session) {
       throw new AppError("Invalid refresh token", 401);
     }
 
-    // Check if expired
     if (new Date() > session.expiresAt) {
       await authRepository.deleteSession(session.id);
       throw new AppError("Refresh token has expired", 401);
     }
 
-    // Delete old session
+    // Fetch the user to get username for the new token
+    const user = await userRepository.findById(session.userId);
+
+    // Delete old session (token rotation)
     await authRepository.deleteSession(session.id);
 
-    // Generate new tokens
-    const tokens = await generateTokens(session.userId, "", ip, userAgent);
+    const tokens = await generateTokens(
+      session.userId,
+      user?.email || "",
+      user?.username || "",
+      ip,
+      userAgent
+    );
 
     return tokens;
   },
@@ -101,24 +101,21 @@ export const authService = {
 async function generateTokens(
   userId: string,
   email: string,
+  username: string,
   ip?: string,
   userAgent?: string
 ): Promise<AuthTokens> {
-  // Generate access token
   const accessToken = jwt.sign(
-    { userId, email },
+    { userId, email, username },
     env.JWT_SECRET,
     { expiresIn: env.JWT_ACCESS_EXPIRES_IN as any }
   );
 
-  // Generate refresh token
   const refreshToken = crypto.randomBytes(64).toString("hex");
 
-  // Calculate expiration
   const expiresInMs = parseDuration(env.JWT_REFRESH_EXPIRES_IN);
   const expiresAt = new Date(Date.now() + expiresInMs);
 
-  // Store refresh token in database
   await authRepository.createSession({
     userId,
     refreshToken,
