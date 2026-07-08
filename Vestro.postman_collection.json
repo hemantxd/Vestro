@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Vestro API",
-    "description": "Vestro Backend API - Auth & Users modules",
+    "description": "Vestro Backend API - Auth, Users, Follows & Notifications modules",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "vestro"
   },
@@ -233,6 +233,183 @@
           }
         }
       ]
+    },
+    {
+      "name": "Follows",
+      "item": [
+        {
+          "name": "Follow User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"followingId\": \"user-uuid-here\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/follows",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "follows"]
+            }
+          }
+        },
+        {
+          "name": "Unfollow User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/follows/{{followingId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "follows", "{{followingId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Followers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/follows/{{userId}}/followers?limit=20&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "follows", "{{userId}}", "followers"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "page", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Following",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/follows/{{userId}}/following?limit=20&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "follows", "{{userId}}", "following"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "page", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Check Follow Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/follows/{{followingId}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "follows", "{{followingId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Remove Follower",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/follows/follower/{{followerId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "follows", "follower", "{{followerId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications?limit=20&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "page", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/unread-count",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications", "unread-count"]
+            }
+          }
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/{{notificationId}}/read",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications", "{{notificationId}}", "read"]
+            }
+          }
+        },
+        {
+          "name": "Mark All as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/read-all",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications", "read-all"]
+            }
+          }
+        },
+        {
+          "name": "Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/{{notificationId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications", "{{notificationId}}"]
+            }
+          }
+        }
+      ]
     }
   ],
   "variable": [
@@ -248,6 +425,21 @@
     },
     {
       "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "followingId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "followerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "notificationId",
       "value": "",
       "type": "string"
     }
