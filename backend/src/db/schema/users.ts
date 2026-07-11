@@ -7,7 +7,6 @@ import {
   timestamp,
   integer,
   jsonb,
-  index,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable(
@@ -16,9 +15,13 @@ export const users = pgTable(
     id: uuid("id").defaultRandom().primaryKey().unique().notNull(),
 
     username: varchar("username", { length: 30 }).notNull().unique(),
-    email: varchar("email", { length: 255 }).notNull().unique(),
+    email: varchar("email", { length: 255 }),
 
     passwordHash: text("password_hash"),
+
+    // OAuth fields
+    provider: varchar("provider", { length: 20 }).default("local").notNull(),
+    providerId: text("provider_id"),
 
     displayName: varchar("display_name", { length: 100 }),
 

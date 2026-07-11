@@ -2,6 +2,16 @@ import { Response, NextFunction } from "express";
 import { AuthRequest } from "../../common/types/index.js";
 import { authService } from "./auth.service.js";
 
+function setRefreshCookie(res: Response, refreshToken: string) {
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    path: "/api/v1/auth/refresh",
+  });
+}
+
 export const authController = {
   async register(req: AuthRequest, res: Response, next: NextFunction) {
     try {
@@ -9,19 +19,11 @@ export const authController = {
       const userAgent = req.headers["user-agent"];
       const tokens = await authService.register(req.body, ip, userAgent);
 
-      res.cookie("refreshToken", tokens.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        path: "/api/v1/auth/refresh",
-      });
+      setRefreshCookie(res, tokens.refreshToken);
 
       res.status(201).json({
         status: "success",
-        data: {
-          accessToken: tokens.accessToken,
-        },
+        data: { accessToken: tokens.accessToken },
       });
     } catch (error) {
       next(error);
@@ -34,19 +36,29 @@ export const authController = {
       const userAgent = req.headers["user-agent"];
       const tokens = await authService.login(req.body, ip, userAgent);
 
-      res.cookie("refreshToken", tokens.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        path: "/api/v1/auth/refresh",
-      });
+      setRefreshCookie(res, tokens.refreshToken);
 
       res.status(200).json({
         status: "success",
-        data: {
-          accessToken: tokens.accessToken,
-        },
+        data: { accessToken: tokens.accessToken },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async googleLogin(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const ip = req.ip;
+      const userAgent = req.headers["user-agent"];
+      const { idToken } = req.body;
+      const tokens = await authService.googleLogin(idToken, ip, userAgent);
+
+      setRefreshCookie(res, tokens.refreshToken);
+
+      res.status(200).json({
+        status: "success",
+        data: { accessToken: tokens.accessToken },
       });
     } catch (error) {
       next(error);
@@ -58,10 +70,7 @@ export const authController = {
       const refreshToken = req.cookies?.refreshToken;
 
       if (!refreshToken) {
-        res.status(401).json({
-          status: "error",
-          message: "Refresh token is required",
-        });
+        res.status(401).json({ status: "error", message: "Refresh token is required" });
         return;
       }
 
@@ -69,19 +78,11 @@ export const authController = {
       const userAgent = req.headers["user-agent"];
       const tokens = await authService.refreshTokens(refreshToken, ip, userAgent);
 
-      res.cookie("refreshToken", tokens.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        path: "/api/v1/auth/refresh",
-      });
+      setRefreshCookie(res, tokens.refreshToken);
 
       res.status(200).json({
         status: "success",
-        data: {
-          accessToken: tokens.accessToken,
-        },
+        data: { accessToken: tokens.accessToken },
       });
     } catch (error) {
       next(error);
@@ -103,10 +104,7 @@ export const authController = {
         path: "/api/v1/auth/refresh",
       });
 
-      res.status(200).json({
-        status: "success",
-        message: "Logged out successfully",
-      });
+      res.status(200).json({ status: "success", message: "Logged out successfully" });
     } catch (error) {
       next(error);
     }
@@ -115,10 +113,7 @@ export const authController = {
   async logoutAll(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       if (!req.user) {
-        res.status(401).json({
-          status: "error",
-          message: "Not authenticated",
-        });
+        res.status(401).json({ status: "error", message: "Not authenticated" });
         return;
       }
 
@@ -131,10 +126,7 @@ export const authController = {
         path: "/api/v1/auth/refresh",
       });
 
-      res.status(200).json({
-        status: "success",
-        message: "Logged out from all sessions",
-      });
+      res.status(200).json({ status: "success", message: "Logged out from all sessions" });
     } catch (error) {
       next(error);
     }
@@ -143,17 +135,11 @@ export const authController = {
   async me(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       if (!req.user) {
-        res.status(401).json({
-          status: "error",
-          message: "Not authenticated",
-        });
+        res.status(401).json({ status: "error", message: "Not authenticated" });
         return;
       }
 
-      res.status(200).json({
-        status: "success",
-        data: req.user,
-      });
+      res.status(200).json({ status: "success", data: req.user });
     } catch (error) {
       next(error);
     }

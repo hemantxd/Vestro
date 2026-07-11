@@ -16,6 +16,15 @@ export const authRepository = {
     });
   },
 
+  async findUserByProvider(provider: string, providerId: string) {
+    return db.query.users.findFirst({
+      where: and(
+        eq(users.provider, provider),
+        eq(users.providerId, providerId)
+      ),
+    });
+  },
+
   async createUser(data: {
     username: string;
     email: string;
@@ -29,9 +38,41 @@ export const authRepository = {
         email: data.email,
         passwordHash: data.passwordHash,
         displayName: data.displayName || data.username,
+        provider: "local",
       })
       .returning();
+    return user;
+  },
 
+  async createOAuthUser(data: {
+    username: string;
+    email: string;
+    provider: string;
+    providerId: string;
+    displayName?: string | null;
+    avatar?: string | null;
+  }) {
+    const [user] = await db
+      .insert(users)
+      .values({
+        username: data.username,
+        email: data.email,
+        provider: data.provider,
+        providerId: data.providerId,
+        displayName: data.displayName || data.username,
+        avatar: data.avatar || null,
+        emailVerified: true,
+      })
+      .returning();
+    return user;
+  },
+
+  async linkGoogleAccount(userId: string, googleId: string) {
+    const [user] = await db
+      .update(users)
+      .set({ provider: "google", providerId: googleId })
+      .where(eq(users.id, userId))
+      .returning();
     return user;
   },
 
@@ -52,7 +93,6 @@ export const authRepository = {
         expiresAt: data.expiresAt,
       })
       .returning();
-
     return session;
   },
 

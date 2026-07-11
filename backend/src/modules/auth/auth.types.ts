@@ -10,6 +10,10 @@ export interface LoginInput {
   password: string;
 }
 
+export interface GoogleLoginInput {
+  idToken: string;
+}
+
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
