@@ -20,11 +20,20 @@ const profileStorage = new CloudinaryStorage({
   } as any,
 });
 
+// Cloudinary storage for post media (images + videos)
+const postMediaStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "vestro/posts",
+    allowed_formats: ["jpg", "jpeg", "png", "gif", "webp", "mp4", "mov", "avi", "mkv"],
+    resource_type: "auto",
+    transformation: [{ quality: "auto" }],
+  } as any,
+});
+
 export const uploadProfilePicture = multer({
   storage: profileStorage,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
-  },
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     const allowedMimes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     if (allowedMimes.includes(file.mimetype)) {
@@ -35,13 +44,27 @@ export const uploadProfilePicture = multer({
   },
 }).single("profilePicture");
 
+export const uploadPostMedia = multer({
+  storage: postMediaStorage,
+  limits: { fileSize: 100 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowedMimes = [
+      "image/jpeg", "image/png", "image/gif", "image/webp",
+      "video/mp4", "video/quicktime", "video/x-msvideo", "video/x-matroska",
+    ];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid file type. Only images and videos are allowed."));
+    }
+  },
+}).array("media", 10);
+
 // Helper to delete an image from Cloudinary by URL
 export async function deleteCloudinaryImage(imageUrl: string): Promise<void> {
   if (!imageUrl) return;
 
   try {
-    // Extract public_id from Cloudinary URL
-    // URL format: https://res.cloudinary.com/cloud_name/image/upload/v123456/vestro/profiles/filename
     const parts = imageUrl.split("/");
     const uploadIndex = parts.indexOf("upload");
     if (uploadIndex === -1) return;
