@@ -555,6 +555,101 @@
           }
         }
       ]
+    },
+    {
+      "name": "Likes",
+      "item": [
+        {
+          "name": "Toggle Like",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/likes/{{postId}}/toggle",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "likes", "{{postId}}", "toggle"]
+            }
+          }
+        },
+        {
+          "name": "Get Likers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/likes/{{postId}}/likers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "likes", "{{postId}}", "likers"]
+            }
+          }
+        },
+        {
+          "name": "Get Like Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/likes/{{postId}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "likes", "{{postId}}", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Create Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Great post!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/comments/{{postId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "comments", "{{postId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Comments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/comments/{{postId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "comments", "{{postId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/comments/{{commentId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "comments", "{{commentId}}"]
+            }
+          }
+        }
+      ]
     }
   ],
   "variable": [

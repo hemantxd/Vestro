@@ -4,6 +4,8 @@ import userRoutes from "../modules/users/user.routes.js";
 import followRoutes from "../modules/follows/follow.routes.js";
 import notificationRoutes from "../modules/notifications/notification.routes.js";
 import postRoutes from "../modules/posts/post.routes.js";
+import likeRoutes from "../modules/likes/like.routes.js";
+import commentRoutes from "../modules/comments/comment.routes.js";
 
 const router = Router();
 
@@ -12,5 +14,7 @@ router.use("/users", userRoutes);
 router.use("/follows", followRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/posts", postRoutes);
+router.use("/likes", likeRoutes);
+router.use("/comments", commentRoutes);
 
 export default router;
