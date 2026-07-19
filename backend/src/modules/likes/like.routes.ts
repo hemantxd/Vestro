@@ -4,11 +4,13 @@ import { authenticate } from "../../middleware/auth.middleware.js";
 
 const router = Router();
 
-// Public
-router.get("/:postId/likers", likeController.getLikers as any);
+// === Post likes ===
+router.get("/:postId/likers", likeController.getPostLikers as any);
+router.post("/:postId/toggle", authenticate as any, likeController.togglePostLike as any);
+router.get("/:postId/status", authenticate as any, likeController.getPostLikeStatus as any);
 
-// Protected
-router.post("/:postId/toggle", authenticate as any, likeController.toggleLike as any);
-router.get("/:postId/status", authenticate as any, likeController.getLikeStatus as any);
+// === Comment likes ===
+router.post("/comment/:commentId/toggle", authenticate as any, likeController.toggleCommentLike as any);
+router.get("/comment/:commentId/status", authenticate as any, likeController.getCommentLikeStatus as any);
 
 export default router;

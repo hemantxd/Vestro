@@ -10,28 +10,36 @@ export const commentService = {
       throw new AppError("Post not found", 404);
     }
 
+    // If replying to a comment, verify the parent comment exists
+    if (input.parentId) {
+      const parent = await commentRepository.findById(input.parentId);
+      if (!parent) {
+        throw new AppError("Parent comment not found", 404);
+      }
+      // Ensure replies are only one level deep
+      if (parent.parentId) {
+        throw new AppError("Cannot reply to a reply", 400);
+      }
+    }
+
     const comment = await commentRepository.create({
       postId,
       authorId,
       text: input.text,
+      parentId: input.parentId || null,
     });
 
-    // Sync the comments count on the post
     await commentRepository.syncCommentsCount(postId);
 
-    // Fetch the full comment with author info
-    const comments = await commentRepository.findByPostId(postId);
-    const created = comments.find((c) => c.id === comment.id);
-
-    return created || comment;
+    return comment;
   },
 
-  async getComments(postId: string) {
+  async getComments(postId: string, currentUserId?: string) {
     const post = await postRepository.findById(postId);
     if (!post) {
       throw new AppError("Post not found", 404);
     }
-    return commentRepository.findByPostId(postId);
+    return commentRepository.findByPostId(postId, currentUserId);
   },
 
   async deleteComment(commentId: string, userId: string) {
@@ -44,8 +52,6 @@ export const commentService = {
     }
 
     await commentRepository.delete(commentId);
-
-    // Sync the comments count
     await commentRepository.syncCommentsCount(comment.postId);
   },
 };

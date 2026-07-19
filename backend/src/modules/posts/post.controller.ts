@@ -12,7 +12,6 @@ export const postController = {
 
       const { text } = req.body;
 
-      // Handle uploaded media files
       let mediaUrls: { url: string; type: "image" | "video" }[] | undefined;
       const files = (req as any).files as Express.Multer.File[] | undefined;
 
@@ -33,7 +32,7 @@ export const postController = {
   async getPostById(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { postId } = req.params;
-      const post = await postService.getPostById(postId as string);
+      const post = await postService.getPostById(postId as string, req.user?.userId);
       res.status(200).json({ status: "success", data: post });
     } catch (error) {
       next(error);
@@ -63,7 +62,7 @@ export const postController = {
       const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
       const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined;
 
-      const posts = await postService.getUserPosts(userId as string, { limit, page });
+      const posts = await postService.getUserPosts(userId as string, req.user?.userId, { limit: limit as any, page: page as any });
       res.status(200).json({ status: "success", data: posts });
     } catch (error) {
       next(error);

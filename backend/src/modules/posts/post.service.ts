@@ -1,7 +1,20 @@
 import { AppError } from "../../common/errors/AppError.js";
 import { postRepository } from "./post.repository.js";
 import { followRepository } from "../follows/follow.repository.js";
+import { likeRepository } from "../likes/like.repository.js";
 import type { CreatePostInput } from "./post.types.js";
+
+async function attachIsLiked(posts: any[], userId?: string) {
+  if (!userId || posts.length === 0) return posts;
+
+  const postIds = posts.map((p: any) => p.id);
+  const rows = await likeRepository.getUserLikedPostIds(userId, postIds);
+
+  return posts.map((post: any) => ({
+    ...post,
+    isLiked: rows.has(post.id),
+  }));
+}
 
 export const postService = {
   async createPost(authorId: string, input: CreatePostInput, mediaUrls?: { url: string; type: "image" | "video" }[]) {
@@ -21,7 +34,6 @@ export const postService = {
       mediaType,
     });
 
-    // Add media if provided
     if (hasMedia) {
       await postRepository.addMedia(
         mediaUrls!.map((m, i) => ({
@@ -33,36 +45,33 @@ export const postService = {
       );
     }
 
-    // Increment user's posts count
     await postRepository.incrementPostsCount(authorId);
 
-    return this.getPostById(post.id);
+    return this.getPostById(post.id, authorId);
   },
 
-  async getPostById(postId: string) {
+  async getPostById(postId: string, currentUserId?: string) {
     const post = await postRepository.getPostWithAuthor(postId);
     if (!post) {
       throw new AppError("Post not found", 404);
     }
 
     const media = await postRepository.getMediaForPost(postId);
+    const enriched = await attachIsLiked([post], currentUserId);
 
     return {
-      ...post,
+      ...enriched[0],
       media,
     };
   },
 
   async getFeed(userId: string, options?: { limit?: number; page?: number }) {
-    // Get list of users that the current user follows
     const following = await followRepository.getFollowing(userId, { limit: 1000 });
     const followingIds = following.map((f: any) => f.id);
-    // Include the user's own posts
     const userIds = [...followingIds, userId];
 
     const feed = await postRepository.getFeed(userIds, options);
 
-    // Attach media to each post
     const postsWithMedia = await Promise.all(
       feed.map(async (post) => ({
         ...post,
@@ -70,10 +79,10 @@ export const postService = {
       }))
     );
 
-    return postsWithMedia;
+    return attachIsLiked(postsWithMedia, userId);
   },
 
-  async getUserPosts(authorId: string, options?: { limit?: number; page?: number }) {
+  async getUserPosts(authorId: string, currentUserId?: string, options?: { limit?: number; page?: number }) {
     const userPosts = await postRepository.getUserPosts(authorId, options);
 
     const postsWithMedia = await Promise.all(
@@ -83,7 +92,7 @@ export const postService = {
       }))
     );
 
-    return postsWithMedia;
+    return attachIsLiked(postsWithMedia, currentUserId);
   },
 
   async deletePost(postId: string, userId: string) {

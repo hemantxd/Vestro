@@ -598,6 +598,34 @@
               "path": ["api", "v1", "likes", "{{postId}}", "status"]
             }
           }
+        },
+        {
+          "name": "Toggle Comment Like",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/likes/comment/{{commentId}}/toggle",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "likes", "comment", "{{commentId}}", "toggle"]
+            }
+          }
+        },
+        {
+          "name": "Get Comment Like Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/likes/comment/{{commentId}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "likes", "comment", "{{commentId}}", "status"]
+            }
+          }
         }
       ]
     },
@@ -615,6 +643,25 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"text\": \"Great post!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/comments/{{postId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "comments", "{{postId}}"]
+            }
+          }
+        },
+        {
+          "name": "Reply to Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"I agree with you!\",\n  \"parentId\": \"{{commentId}}\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/comments/{{postId}}",

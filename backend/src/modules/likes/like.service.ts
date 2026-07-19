@@ -1,9 +1,11 @@
 import { AppError } from "../../common/errors/AppError.js";
 import { likeRepository } from "./like.repository.js";
 import { postRepository } from "../posts/post.repository.js";
+import { commentRepository } from "../comments/comment.repository.js";
 
 export const likeService = {
-  async toggleLike(userId: string, postId: string) {
+  // === Post likes ===
+  async togglePostLike(userId: string, postId: string) {
     const post = await postRepository.findById(postId);
     if (!post) {
       throw new AppError("Post not found", 404);
@@ -12,19 +14,17 @@ export const likeService = {
     const existing = await likeRepository.findByUserAndPost(userId, postId);
 
     if (existing) {
-      // Unlike
-      await likeRepository.delete(userId, postId);
+      await likeRepository.deletePostLike(userId, postId);
       await likeRepository.decrementPostLikes(postId);
       return { liked: false };
     } else {
-      // Like
-      await likeRepository.create(userId, postId);
+      await likeRepository.createPostLike(userId, postId);
       await likeRepository.incrementPostLikes(postId);
       return { liked: true };
     }
   },
 
-  async getLikers(postId: string) {
+  async getPostLikers(postId: string) {
     const post = await postRepository.findById(postId);
     if (!post) {
       throw new AppError("Post not found", 404);
@@ -32,8 +32,33 @@ export const likeService = {
     return likeRepository.getLikers(postId);
   },
 
-  async getLikeStatus(userId: string, postId: string) {
+  async getPostLikeStatus(userId: string, postId: string) {
     const like = await likeRepository.findByUserAndPost(userId, postId);
     return { liked: !!like };
+  },
+
+  // === Comment likes ===
+  async toggleCommentLike(userId: string, commentId: string) {
+    const comment = await commentRepository.findById(commentId);
+    if (!comment) {
+      throw new AppError("Comment not found", 404);
+    }
+
+    const existing = await likeRepository.findByUserAndComment(userId, commentId);
+
+    if (existing) {
+      await likeRepository.deleteCommentLike(userId, commentId);
+      await likeRepository.decrementCommentLikes(commentId);
+      return { liked: false };
+    } else {
+      await likeRepository.createCommentLike(userId, commentId);
+      await likeRepository.incrementCommentLikes(commentId);
+      return { liked: true };
+    }
+  },
+
+  async getCommentLikeStatus(userId: string, commentId: string) {
+    const existing = await likeRepository.findByUserAndComment(userId, commentId);
+    return { liked: !!existing };
   },
 };

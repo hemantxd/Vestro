@@ -11,14 +11,14 @@ export const commentController = {
       }
 
       const { postId } = req.params;
-      const { text } = req.body;
+      const { text, parentId } = req.body;
 
       if (!text) {
         res.status(400).json({ status: "error", message: "Text is required" });
         return;
       }
 
-      const comment = await commentService.createComment(postId as string, req.user.userId, { text });
+      const comment = await commentService.createComment(postId as string, req.user.userId, { text, parentId });
       res.status(201).json({ status: "success", data: comment });
     } catch (error) {
       next(error);
@@ -28,7 +28,7 @@ export const commentController = {
   async getComments(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { postId } = req.params;
-      const comments = await commentService.getComments(postId as string);
+      const comments = await commentService.getComments(postId as string, req.user?.userId);
       res.status(200).json({ status: "success", data: comments });
     } catch (error) {
       next(error);

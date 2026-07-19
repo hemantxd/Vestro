@@ -1,5 +1,6 @@
 export interface CreateCommentInput {
   text: string;
+  parentId?: string;
 }
 
 export interface CommentResponse {
@@ -9,7 +10,11 @@ export interface CommentResponse {
   authorUsername: string;
   authorDisplayName: string | null;
   authorAvatar: string | null;
+  parentId: string | null;
   text: string;
+  likesCount: number;
+  isLiked?: boolean;
+  replies?: CommentResponse[];
   createdAt: Date;
   updatedAt: Date | null;
 }
