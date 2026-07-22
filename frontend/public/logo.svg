@@ -1,0 +1,37 @@
+<svg
+  width="512"
+  height="512"
+  viewBox="0 0 512 512"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="vestroGreen" x1="180" y1="380" x2="380" y2="120">
+      <stop offset="0%" stop-color="#00C853"/>
+      <stop offset="100%" stop-color="#1DE46D"/>
+    </linearGradient>
+  </defs>
+
+  <!-- White V leg -->
+  <path
+    d="M120 160
+       L220 360
+       L270 360
+       L170 160
+       Z"
+    fill="#FFFFFF"
+  />
+
+  <!-- Green growth arrow -->
+  <path
+    d="M220 360
+       L345 120
+       L300 100
+       L405 40
+       L410 165
+       L370 140
+       L270 360
+       Z"
+    fill="url(#vestroGreen)"
+  />
+</svg>
