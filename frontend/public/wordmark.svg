@@ -1,0 +1,30 @@
+<svg
+  width="800"
+  height="200"
+  viewBox="0 0 800 200"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <rect width="800" height="200" fill="transparent"/>
+
+  <text
+    x="50"
+    y="145"
+    font-family="Montserrat, Arial, sans-serif"
+    font-size="120"
+    font-weight="800"
+    fill="#FFFFFF"
+  >
+    VES
+  </text>
+
+  <text
+    x="345"
+    y="145"
+    font-family="Montserrat, Arial, sans-serif"
+    font-size="120"
+    font-weight="800"
+    fill="#00C853"
+  >
+    TRO
+  </text>
+</svg>

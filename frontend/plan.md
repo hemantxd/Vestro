@@ -1,4 +1,7 @@
 # Vestro Frontend Roadmap (V1)
+Primary Green: #00C853
+Dark Navy: #0B1220
+White: #FFFFFF
 
 ## Vision
 
