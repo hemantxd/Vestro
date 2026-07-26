@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useAuthStore } from "@/store/auth-store";
 
 const navItems = [
   { label: "Features", href: "#features" },
@@ -13,6 +14,7 @@ const navItems = [
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const { user, isAuthenticated, isLoading, logout } = useAuthStore();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -48,14 +50,8 @@ export default function Navbar() {
                 <stop offset="100%" stopColor="#1DE46D" />
               </linearGradient>
             </defs>
-            <path
-              d="M120 160 L220 360 L270 360 L170 160 Z"
-              fill="#FFFFFF"
-            />
-            <path
-              d="M220 360 L345 120 L300 100 L405 40 L410 165 L370 140 L270 360 Z"
-              fill="url(#navLogo)"
-            />
+            <path d="M120 160 L220 360 L270 360 L170 160 Z" fill="#FFFFFF" />
+            <path d="M220 360 L345 120 L300 100 L405 40 L410 165 L370 140 L270 360 Z" fill="url(#navLogo)" />
           </svg>
           <span className="text-lg font-bold tracking-tight">
             <span className="text-white">VES</span>
@@ -78,18 +74,39 @@ export default function Navbar() {
 
         {/* Right side */}
         <div className="flex items-center gap-4">
-          <Link
-            href="/login"
-            className="text-sm text-white/60 hover:text-white transition-colors duration-200 hidden sm:block"
-          >
-            Login
-          </Link>
-          <Link
-            href="/join"
-            className="text-sm font-medium px-4 py-2 rounded-full bg-[#00C853] text-[#0B1220] hover:bg-[#00E060] transition-all duration-200 shadow-lg shadow-[#00C853]/20"
-          >
-            Join Vestro
-          </Link>
+          {isLoading ? (
+            <div className="w-20 h-8 rounded-full bg-white/5 animate-pulse" />
+          ) : isAuthenticated && user ? (
+            <>
+              <Link
+                href={`/profile/${user.username}`}
+                className="text-sm text-white/60 hover:text-white transition-colors duration-200"
+              >
+                {user.displayName || user.username}
+              </Link>
+              <button
+                onClick={logout}
+                className="text-sm font-medium px-4 py-2 rounded-full border border-white/20 text-white/80 hover:text-white hover:border-white/40 transition-all duration-200"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="text-sm text-white/60 hover:text-white transition-colors duration-200"
+              >
+                Login
+              </Link>
+              <Link
+                href="/join"
+                className="text-sm font-medium px-4 py-2 rounded-full bg-[#00C853] text-[#0B1220] hover:bg-[#00E060] transition-all duration-200 shadow-lg shadow-[#00C853]/20"
+              >
+                Join Vestro
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </motion.nav>
