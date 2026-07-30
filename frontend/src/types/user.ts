@@ -7,7 +7,11 @@ export interface UserProfile {
   avatar: string | null;
   coverImage: string | null;
   location: string | null;
+  birthDate: string | null;
+  gender: string | null;
+  phone: string | null;
   verified: boolean;
+  privateAccount: boolean;
   followersCount: number;
   followingCount: number;
   postsCount: number;
@@ -15,7 +19,13 @@ export interface UserProfile {
 }
 
 export interface UpdateProfileInput {
+  username?: string;
   displayName?: string;
   bio?: string;
   location?: string;
+  avatar?: string | null;
+  coverImage?: string | null;
+  birthDate?: string | null;
+  gender?: string | null;
+  phone?: string | null;
 }

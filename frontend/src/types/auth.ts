@@ -11,7 +11,16 @@ export interface User {
   displayName: string | null;
   bio: string | null;
   avatar: string | null;
+  coverImage: string | null;
   location: string | null;
+  birthDate: string | null;
+  gender: string | null;
+  phone: string | null;
+  verified: boolean;
+  privateAccount: boolean;
+  followersCount: number;
+  followingCount: number;
+  postsCount: number;
   createdAt: string;
 }
 

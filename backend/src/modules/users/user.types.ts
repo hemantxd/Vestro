@@ -15,9 +15,13 @@ export interface UserProfile {
 }
 
 export interface UpdateProfileInput {
+  username?: string;
   displayName?: string;
   bio?: string;
   location?: string;
-  avatar?: string;
-  coverImage?: string;
+  avatar?: string | null;
+  coverImage?: string | null;
+  birthDate?: string | null;
+  gender?: string | null;
+  phone?: string | null;
 }

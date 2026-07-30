@@ -52,10 +52,30 @@ export const userController = {
         return;
       }
 
-      // Cloudinary returns the URL in req.file.path
       const imageUrl = (req.file as any).path;
 
       const profile = await userService.updateProfilePicture(req.user.userId, imageUrl);
+      res.status(200).json({ status: "success", data: profile });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async updateCoverImage(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        res.status(401).json({ status: "error", message: "Not authenticated" });
+        return;
+      }
+
+      if (!req.file) {
+        res.status(400).json({ status: "error", message: "No file uploaded" });
+        return;
+      }
+
+      const imageUrl = (req.file as any).path;
+
+      const profile = await userService.updateCoverImage(req.user.userId, imageUrl);
       res.status(200).json({ status: "success", data: profile });
     } catch (error) {
       next(error);

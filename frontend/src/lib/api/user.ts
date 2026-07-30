@@ -58,6 +58,37 @@ export const userApi = {
     return res.data;
   },
 
+  async uploadCoverImage(file: File): Promise<UserProfile> {
+    const formData = new FormData();
+    formData.append("profilePicture", file);
+
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    const url = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"}/users/profile/cover`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      let message = response.statusText;
+      try {
+        const body = await response.json();
+        message = body.message || message;
+      } catch {}
+      throw new Error(message);
+    }
+
+    const res = await response.json();
+    return res.data;
+  },
+
   async deleteProfilePicture(): Promise<UserProfile> {
     const res = await apiRequest<{ status: string; data: UserProfile }>(
       "/users/profile/picture",

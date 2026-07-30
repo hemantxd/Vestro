@@ -1,5 +1,6 @@
 import { AppError } from "../../common/errors/AppError.js";
 import { userRepository } from "./user.repository.js";
+import { authRepository } from "../auth/auth.repository.js";
 import { deleteCloudinaryImage } from "../../middleware/upload.middleware.js";
 import type { UpdateProfileInput } from "./user.types.js";
 
@@ -12,7 +13,11 @@ const mapUser = (user: any) => ({
   avatar: user.avatar,
   coverImage: user.coverImage,
   location: user.location,
+  birthDate: user.birthDate,
+  gender: user.gender,
+  phone: user.phone,
   verified: user.verified,
+  privateAccount: user.privateAccount,
   followersCount: user.followersCount,
   followingCount: user.followingCount,
   postsCount: user.postsCount,
@@ -42,7 +47,31 @@ export const userService = {
       throw new AppError("User not found", 404);
     }
 
-    const updatedUser = await userRepository.updateUser(userId, input);
+    // Check username uniqueness if changing
+    if (input.username && input.username !== user.username) {
+      const existing = await authRepository.findUserByUsername(input.username);
+      if (existing) {
+        throw new AppError("Username already taken", 409);
+      }
+    }
+
+    // Handle avatar deletion from Cloudinary
+    if (input.avatar === null && user.avatar) {
+      await deleteCloudinaryImage(user.avatar).catch(() => {});
+    }
+
+    // Handle coverImage deletion from Cloudinary
+    if (input.coverImage === null && user.coverImage) {
+      await deleteCloudinaryImage(user.coverImage).catch(() => {});
+    }
+
+    // Convert birthDate string to Date for DB
+    const dbInput: Record<string, unknown> = { ...input };
+    if (input.birthDate !== undefined) {
+      dbInput.birthDate = input.birthDate ? new Date(input.birthDate) : null;
+    }
+
+    const updatedUser = await userRepository.updateUser(userId, dbInput as UpdateProfileInput);
     return mapUser(updatedUser);
   },
 
@@ -58,6 +87,21 @@ export const userService = {
     }
 
     const updatedUser = await userRepository.updateAvatar(userId, imageUrl);
+    return mapUser(updatedUser);
+  },
+
+  async updateCoverImage(userId: string, imageUrl: string) {
+    const user = await userRepository.findById(userId);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    // Delete old cover from Cloudinary if it exists
+    if (user.coverImage) {
+      await deleteCloudinaryImage(user.coverImage);
+    }
+
+    const updatedUser = await userRepository.updateUser(userId, { coverImage: imageUrl } as UpdateProfileInput);
     return mapUser(updatedUser);
   },
 

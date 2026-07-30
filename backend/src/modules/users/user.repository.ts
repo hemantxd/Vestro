@@ -24,7 +24,7 @@ export const userRepository = {
     return user?.avatar || null;
   },
 
-  async updateUser(id: string, data: UpdateProfileInput & { avatar?: string }) {
+  async updateUser(id: string, data: UpdateProfileInput) {
     const [user] = await db
       .update(users)
       .set(data)

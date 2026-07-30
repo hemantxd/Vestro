@@ -15,6 +15,7 @@ router.get("/profile/:userId", userController.getProfile);
 router.get("/search", authenticate, userController.searchUsers);
 router.patch("/profile", authenticate, validate(updateProfileSchema as any), userController.updateProfile);
 router.post("/profile/picture", authenticate, uploadProfilePicture, userController.updateProfilePicture);
+router.post("/profile/cover", authenticate, uploadProfilePicture, userController.updateCoverImage);
 router.delete("/profile/picture", authenticate, userController.deleteProfilePicture);
 
 export default router;
