@@ -100,10 +100,10 @@ export default function Navbar() {
                 Login
               </Link>
               <Link
-                href="/join"
+                href="/register"
                 className="text-sm font-medium px-4 py-2 rounded-full bg-[#00C853] text-[#0B1220] hover:bg-[#00E060] transition-all duration-200 shadow-lg shadow-[#00C853]/20"
               >
-                Join Vestro
+                Sign Up
               </Link>
             </>
           )}
