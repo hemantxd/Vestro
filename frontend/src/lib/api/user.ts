@@ -1,4 +1,5 @@
 import { apiRequest } from "./client";
+import { API_BASE_URL } from "@/constants/env";
 import type { UserProfile, UpdateProfileInput } from "@/types/user";
 
 export const userApi = {
@@ -36,7 +37,7 @@ export const userApi = {
         ? localStorage.getItem("accessToken")
         : null;
 
-    const url = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"}/users/profile/picture`;
+    const url = `${API_BASE_URL}/users/profile/picture`;
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -67,7 +68,7 @@ export const userApi = {
         ? localStorage.getItem("accessToken")
         : null;
 
-    const url = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"}/users/profile/cover`;
+    const url = `${API_BASE_URL}/users/profile/cover`;
     const response = await fetch(url, {
       method: "POST",
       headers: {
