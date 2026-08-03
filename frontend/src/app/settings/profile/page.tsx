@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import AppNavbar from "@/components/app/AppNavbar";
 import { useAuthStore } from "@/store/auth-store";
 import { userApi } from "@/lib/api/user";
 import type { UserProfile } from "@/types/user";
@@ -147,22 +147,11 @@ export default function SettingsProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#0B1220]">
-      {/* Header */}
-      <div className="border-b border-white/5">
-        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center gap-4">
-          <Link href="/" className="text-white/40 hover:text-white transition-colors">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </Link>
-          <div>
-            <h1 className="text-lg font-semibold text-white">Settings</h1>
-            <p className="text-xs text-white/40">Profile</p>
-          </div>
-        </div>
-      </div>
+      {/* Shared Navbar */}
+      <AppNavbar />
 
-      <div className="max-w-2xl mx-auto px-6 py-8">
+      <div className="pt-14 max-w-2xl mx-auto px-6 py-8">
+        <h1 className="text-lg font-semibold text-white mb-6">Settings</h1>
         {error && (
           <div className="mb-6 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">{error}</div>
         )}

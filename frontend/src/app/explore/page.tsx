@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import AppNavbar from "@/components/app/AppNavbar";
 import { userApi } from "@/lib/api/user";
 import type { UserProfile } from "@/types/user";
 
@@ -38,19 +39,10 @@ export default function ExplorePage() {
 
   return (
     <div className="min-h-screen bg-[#0B1220]">
-      {/* Header */}
-      <div className="border-b border-white/5">
-        <div className="max-w-2xl mx-auto px-6 py-4">
-          <Link href="/" className="text-white/40 hover:text-white transition-colors inline-block mb-2">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </Link>
-          <h1 className="text-lg font-semibold text-white">Search Users</h1>
-        </div>
-      </div>
+      {/* Shared Navbar */}
+      <AppNavbar />
 
-      <div className="max-w-2xl mx-auto px-6 py-6">
+      <div className="pt-14 max-w-2xl mx-auto px-6 py-6">
         {/* Search Input */}
         <div className="relative mb-8">
           <svg

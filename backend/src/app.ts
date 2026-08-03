@@ -12,9 +12,13 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://vestro-pink.vercel.app",
+];
 app.use(
   cors({
-    origin: env.CORS_ORIGIN,
+    origin: allowedOrigins,
     credentials: true,
   })
 );

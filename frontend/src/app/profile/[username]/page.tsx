@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import AppNavbar from "@/components/app/AppNavbar";
 import { userApi } from "@/lib/api/user";
+import { followApi } from "@/lib/api/follow";
 import { useAuthStore } from "@/store/auth-store";
 import type { UserProfile } from "@/types/user";
 
@@ -14,6 +16,8 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
 
   const isOwnProfile = currentUser?.username === username;
 
@@ -22,11 +26,41 @@ export default function ProfilePage() {
     let cancelled = false;
     userApi
       .getByUsername(username)
-      .then((p) => { if (!cancelled) setProfile(p); })
+      .then((p) => {
+        if (cancelled) return;
+        setProfile(p);
+        // If not own profile, check follow status
+        if (currentUser && currentUser.username !== username) {
+          followApi
+            .getFollowStatus(p.id)
+            .then((status) => { if (!cancelled) setIsFollowing(status.isFollowing); })
+            .catch(() => {});
+        }
+      })
       .catch((err) => { if (!cancelled) setError(err.message); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [username]);
+  }, [username, currentUser?.username]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleFollowToggle = async () => {
+    if (!profile) return;
+    setFollowLoading(true);
+    try {
+      if (isFollowing) {
+        await followApi.unfollow(profile.id);
+        setIsFollowing(false);
+        setProfile({ ...profile, followersCount: Math.max(0, profile.followersCount - 1) });
+      } else {
+        await followApi.follow(profile.id);
+        setIsFollowing(true);
+        setProfile({ ...profile, followersCount: profile.followersCount + 1 });
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update follow status");
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -52,6 +86,9 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#0B1220]">
+      {/* Shared Navbar */}
+      <AppNavbar />
+
       {/* Cover / Header */}
       <div className="h-48 sm:h-64 bg-gradient-to-br from-[#00C853]/20 to-[#0B1220] relative">
         {profile.coverImage && (
@@ -95,14 +132,32 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {isOwnProfile && (
-            <Link
-              href="/settings/profile"
-              className="px-4 py-2 rounded-lg border border-white/20 text-white/80 hover:text-white hover:border-white/40 text-sm font-medium transition-all duration-200"
-            >
-              Edit Profile
-            </Link>
-          )}
+          <div className="flex items-center gap-3 pb-2">
+            {isOwnProfile ? (
+              <Link
+                href="/settings/profile"
+                className="px-4 py-2 rounded-lg border border-white/20 text-white/80 hover:text-white hover:border-white/40 text-sm font-medium transition-all duration-200"
+              >
+                Edit Profile
+              </Link>
+            ) : (
+              <button
+                onClick={handleFollowToggle}
+                disabled={followLoading}
+                className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isFollowing
+                    ? "border border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                    : "bg-[#00C853] text-[#0B1220] hover:bg-[#00E060] shadow-lg shadow-[#00C853]/20"
+                }`}
+              >
+                {followLoading
+                  ? "..."
+                  : isFollowing
+                  ? "Following"
+                  : "Follow"}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Bio & Info */}
