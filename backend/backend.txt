@@ -136,9 +136,7 @@ src/
 │   └── seed/
 │
 ├── sockets/
-│   ├── chat.socket.ts
-│   ├── notification.socket.ts
-│   └── index.ts
+│   ├── use websockets not socket.io
 │
 ├── jobs/
 │   ├── email.job.ts

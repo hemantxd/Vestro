@@ -18,6 +18,7 @@
   "type": "module",
   "dependencies": {
     "argon2": "^0.44.0",
+    "bullmq": "^6.0.6",
     "cloudinary": "^2.10.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -28,6 +29,7 @@
     "google-auth-library": "^10.9.0",
     "helmet": "^8.2.0",
     "hpp": "^0.2.3",
+    "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.2.0",
     "multer-storage-cloudinary": "^4.0.0",

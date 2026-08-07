@@ -118,7 +118,7 @@ npm install razorpay
 Always verify payment signatures and rely on webhooks.
 
 Realtime
-npm install socket.io
+socket
 
 Useful for:
 

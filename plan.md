@@ -303,7 +303,6 @@ NestJS
 
 ## Realtime
 
-* Socket.IO
 * WebSockets
 * Redis Pub/Sub
 

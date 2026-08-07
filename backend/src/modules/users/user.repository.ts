@@ -27,7 +27,7 @@ export const userRepository = {
   async updateUser(id: string, data: UpdateProfileInput) {
     const [user] = await db
       .update(users)
-      .set(data)
+      .set(data as any)
       .where(eq(users.id, id))
       .returning();
 

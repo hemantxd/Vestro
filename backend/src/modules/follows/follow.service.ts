@@ -1,7 +1,8 @@
 import { AppError } from "../../common/errors/AppError.js";
 import { followRepository } from "./follow.repository.js";
 import { userRepository } from "../users/user.repository.js";
-import { notificationService } from "../notifications/notification.service.js";
+import { enqueueFollowNotification } from "../../infrastructure/queue/queues/notification.queue.js";
+import { logger } from "../../config/logger.js";
 
 export const followService = {
   async follow(followerId: string, followingId: string) {
@@ -27,7 +28,14 @@ export const followService = {
       followRepository.incrementFollowingCount(followerId),
     ]);
 
-    await notificationService.createFollowNotification(followingId, followerId);
+    //log
+    logger.info(
+      { followerId, followingId },
+      "Follow action completed. Enqueuing follow notification job..."
+    );
+    console.log(`Follow action completed. Enqueuing follow notification job for followerId: ${followerId}, followingId: ${followingId}`);
+    // Enqueue notification job — processed asynchronously by the worker
+    await enqueueFollowNotification(followingId, followerId);
 
     return follow;
   },

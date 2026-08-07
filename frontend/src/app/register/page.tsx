@@ -24,7 +24,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(username, email, password, displayName || undefined);
-      router.push("/");
+      router.push("/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
@@ -79,7 +79,7 @@ export default function RegisterPage() {
                   setError("");
                   try {
                     await googleLogin(credentialResponse.credential);
-                    router.push("/");
+                    router.push("/home");
                   } catch (err) {
                     setError(err instanceof Error ? err.message : "Google sign up failed");
                   } finally {

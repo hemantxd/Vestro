@@ -22,7 +22,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      router.push("/");
+      router.push("/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -77,7 +77,7 @@ export default function LoginPage() {
                   setError("");
                   try {
                     await googleLogin(credentialResponse.credential);
-                    router.push("/");
+                    router.push("/home");
                   } catch (err) {
                     setError(err instanceof Error ? err.message : "Google sign in failed");
                   } finally {
