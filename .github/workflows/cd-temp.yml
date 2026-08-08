@@ -1,0 +1,40 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy Frontend (Vercel) & Backend (Render)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ---------------------------------------------------------------
+      # Frontend → Vercel
+      # Create a Deploy Hook in Vercel:
+      #   Project → Settings → Git → Deploy Hooks → Add Hook
+      #   (e.g. name: "production", branch: "main")
+      # Then add the generated URL as a GitHub secret: VERCEL_DEPLOY_HOOK
+      # ---------------------------------------------------------------
+      - name: Trigger Vercel Deploy
+        if: ${{ secrets.VERCEL_DEPLOY_HOOK != '' }}
+        run: |
+          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
+
+      # ---------------------------------------------------------------
+      # Backend → Render
+      # Create a Deploy Hook in Render:
+      #   Service → Settings → Deploy → Deploy Hook → Generate URL
+      # Then add the generated URL as a GitHub secret: RENDER_DEPLOY_HOOK
+      # ---------------------------------------------------------------
+      - name: Trigger Render Deploy
+        if: ${{ secrets.RENDER_DEPLOY_HOOK != '' }}
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
