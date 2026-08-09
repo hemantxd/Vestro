@@ -7,6 +7,7 @@ export const postRepository = {
   async create(data: {
     authorId: string;
     text?: string | null;
+    ticker?: string | null;
     hasMedia: boolean;
     mediaType?: string | null;
   }) {
@@ -15,6 +16,7 @@ export const postRepository = {
       .values({
         authorId: data.authorId,
         text: data.text || null,
+        ticker: data.ticker ? data.ticker.toUpperCase() : null,
         hasMedia: data.hasMedia,
         mediaType: data.mediaType || null,
       })
@@ -51,6 +53,7 @@ export const postRepository = {
         authorDisplayName: users.displayName,
         authorAvatar: users.avatar,
         text: posts.text,
+        ticker: posts.ticker,
         hasMedia: posts.hasMedia,
         mediaType: posts.mediaType,
         likesCount: posts.likesCount,
@@ -89,6 +92,7 @@ export const postRepository = {
         authorDisplayName: users.displayName,
         authorAvatar: users.avatar,
         text: posts.text,
+        ticker: posts.ticker,
         hasMedia: posts.hasMedia,
         mediaType: posts.mediaType,
         likesCount: posts.likesCount,
@@ -122,6 +126,7 @@ export const postRepository = {
         authorDisplayName: users.displayName,
         authorAvatar: users.avatar,
         text: posts.text,
+        ticker: posts.ticker,
         hasMedia: posts.hasMedia,
         mediaType: posts.mediaType,
         likesCount: posts.likesCount,
@@ -132,6 +137,40 @@ export const postRepository = {
       .from(posts)
       .innerJoin(users, eq(posts.authorId, users.id))
       .where(eq(posts.authorId, authorId))
+      .orderBy(desc(posts.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    return results;
+  },
+
+  async getPostsByTicker(
+    ticker: string,
+    options?: { limit?: number; page?: number }
+  ) {
+    const limit = options?.limit || 20;
+    const page = options?.page || 1;
+    const offset = (page - 1) * limit;
+
+    const results = await db
+      .select({
+        id: posts.id,
+        authorId: posts.authorId,
+        authorUsername: users.username,
+        authorDisplayName: users.displayName,
+        authorAvatar: users.avatar,
+        text: posts.text,
+        ticker: posts.ticker,
+        hasMedia: posts.hasMedia,
+        mediaType: posts.mediaType,
+        likesCount: posts.likesCount,
+        commentsCount: posts.commentsCount,
+        sharesCount: posts.sharesCount,
+        createdAt: posts.createdAt,
+      })
+      .from(posts)
+      .innerJoin(users, eq(posts.authorId, users.id))
+      .where(eq(posts.ticker, ticker.toUpperCase()))
       .orderBy(desc(posts.createdAt))
       .limit(limit)
       .offset(offset);

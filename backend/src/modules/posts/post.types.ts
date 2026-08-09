@@ -1,5 +1,6 @@
 export interface CreatePostInput {
   text?: string;
+  ticker?: string;
   mediaIds?: string[];
 }
 
@@ -21,6 +22,7 @@ export interface PostResponse {
   authorDisplayName: string | null;
   authorAvatar: string | null;
   text: string | null;
+  ticker: string | null;
   hasMedia: boolean;
   mediaType: string | null;
   media: PostMediaItem[];

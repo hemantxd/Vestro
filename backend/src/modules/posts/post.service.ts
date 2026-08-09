@@ -2,6 +2,8 @@ import { AppError } from "../../common/errors/AppError.js";
 import { postRepository } from "./post.repository.js";
 import { followRepository } from "../follows/follow.repository.js";
 import { likeRepository } from "../likes/like.repository.js";
+import { userRepository } from "../users/user.repository.js";
+import { enqueueMentionNotification } from "../../infrastructure/queue/queues/notification.queue.js";
 import type { CreatePostInput } from "./post.types.js";
 
 async function attachIsLiked(posts: any[], userId?: string) {
@@ -14,6 +16,31 @@ async function attachIsLiked(posts: any[], userId?: string) {
     ...post,
     isLiked: rows.has(post.id),
   }));
+}
+
+// Extract unique @username mentions from post text (e.g. "@elonmusk")
+function extractMentionedUsernames(text: string): string[] {
+  const regex = /@([a-zA-Z0-9_]{1,30})/g;
+  const usernames = new Set<string>();
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(text)) !== null) {
+    usernames.add(match[1]);
+  }
+  return [...usernames];
+}
+
+async function notifyMentionedUsers(text: string, actorId: string, postId: string) {
+  const mentionedUsernames = extractMentionedUsernames(text);
+  if (mentionedUsernames.length === 0) return;
+
+  const mentionedUsers = await userRepository.findByUsernames(mentionedUsernames);
+
+  // Notify each mentioned user (except the author themselves)
+  await Promise.all(
+    mentionedUsers
+      .filter((u) => u.id !== actorId)
+      .map((u) => enqueueMentionNotification(u.id, actorId, postId))
+  );
 }
 
 export const postService = {
@@ -30,6 +57,7 @@ export const postService = {
     const post = await postRepository.create({
       authorId,
       text: input.text || null,
+      ticker: input.ticker || null,
       hasMedia: !!hasMedia,
       mediaType,
     });
@@ -46,6 +74,11 @@ export const postService = {
     }
 
     await postRepository.incrementPostsCount(authorId);
+
+    // Fire-and-forget: notify mentioned users (async, non-blocking)
+    if (input.text) {
+      await notifyMentionedUsers(input.text, authorId, post.id);
+    }
 
     return this.getPostById(post.id, authorId);
   },
@@ -87,6 +120,19 @@ export const postService = {
 
     const postsWithMedia = await Promise.all(
       userPosts.map(async (post) => ({
+        ...post,
+        media: await postRepository.getMediaForPost(post.id),
+      }))
+    );
+
+    return attachIsLiked(postsWithMedia, currentUserId);
+  },
+
+  async getPostsByTicker(ticker: string, currentUserId?: string, options?: { limit?: number; page?: number }) {
+    const tickerPosts = await postRepository.getPostsByTicker(ticker, options);
+
+    const postsWithMedia = await Promise.all(
+      tickerPosts.map(async (post) => ({
         ...post,
         media: await postRepository.getMediaForPost(post.id),
       }))

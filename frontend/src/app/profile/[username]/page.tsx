@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import AppNavbar from "@/components/app/AppNavbar";
+import FollowListModal from "@/components/app/FollowListModal";
 import { userApi } from "@/lib/api/user";
 import { followApi } from "@/lib/api/follow";
 import { useAuthStore } from "@/store/auth-store";
@@ -18,6 +19,7 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState<"followers" | "following" | null>(null);
 
   const isOwnProfile = currentUser?.username === username;
 
@@ -184,20 +186,26 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="flex items-center gap-6 pb-8 border-b border-white/5">
+        {/* Stats — Instagram style, clickable */}
+        <div className="flex items-center gap-8 pb-8 border-b border-white/5">
           <div className="text-center">
             <p className="text-sm font-semibold text-white">{profile.postsCount}</p>
             <p className="text-xs text-white/40">Posts</p>
           </div>
-          <div className="text-center">
+          <button
+            onClick={() => setModalOpen("followers")}
+            className="text-center hover:opacity-70 transition-opacity"
+          >
             <p className="text-sm font-semibold text-white">{profile.followersCount}</p>
             <p className="text-xs text-white/40">Followers</p>
-          </div>
-          <div className="text-center">
+          </button>
+          <button
+            onClick={() => setModalOpen("following")}
+            className="text-center hover:opacity-70 transition-opacity"
+          >
             <p className="text-sm font-semibold text-white">{profile.followingCount}</p>
             <p className="text-xs text-white/40">Following</p>
-          </div>
+          </button>
         </div>
 
         {/* Posts placeholder */}
@@ -205,6 +213,15 @@ export default function ProfilePage() {
           <p className="text-sm text-white/30">No posts yet.</p>
         </div>
       </div>
+
+      {/* Followers / Following Modal */}
+      <FollowListModal
+        open={modalOpen !== null}
+        title={modalOpen === "followers" ? "Followers" : "Following"}
+        userId={profile.id}
+        type={modalOpen ?? "followers"}
+        onClose={() => setModalOpen(null)}
+      />
     </div>
   );
 }

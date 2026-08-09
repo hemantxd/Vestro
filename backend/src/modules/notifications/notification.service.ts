@@ -17,6 +17,22 @@ export const notificationService = {
     return notificationRepository.create(input);
   },
 
+  async createMentionNotification(userId: string, actorId: string, entityId?: string) {
+    const actor = await userRepository.findById(actorId);
+    if (!actor) return;
+
+    const input: CreateNotificationInput = {
+      userId,
+      type: "mention",
+      actorId,
+      entityId,
+      entityType: "post",
+      message: `${actor.username} mentioned you in a post`,
+    };
+
+    return notificationRepository.create(input);
+  },
+
   async getNotifications(userId: string, options?: { limit?: number; page?: number }) {
     return notificationRepository.findByUserId(userId, options);
   },

@@ -22,6 +22,10 @@ export const posts = pgTable(
 
     text: text("text"),
 
+    // Stock ticker associated with the post (e.g. "AAPL", "TSLA")
+    // Used as a tag to group/filter posts by ticker
+    ticker: varchar("ticker", { length: 20 }),
+
     // Media is stored in post_media table, but we keep a quick reference
     hasMedia: boolean("has_media").default(false),
 
@@ -39,6 +43,7 @@ export const posts = pgTable(
   (table) => [
     index("post_author_idx").on(table.authorId),
     index("post_created_idx").on(table.createdAt),
+    index("post_ticker_idx").on(table.ticker),
   ]
 );
 

@@ -2,7 +2,7 @@ import { Worker, Job } from "bullmq";
 import { bullmqConnection } from "../bullmq.js";
 import { notificationService } from "../../../modules/notifications/notification.service.js";
 import { logger } from "../../../config/logger.js";
-import type { FollowNotificationJobData } from "../queues/notification.queue.js";
+import type { FollowNotificationJobData, MentionNotificationJobData } from "../queues/notification.queue.js";
 
 export const notificationWorker = new Worker(
   "notifications",
@@ -12,6 +12,11 @@ export const notificationWorker = new Worker(
         const { userId, actorId } = job.data as FollowNotificationJobData;
         // Reuse the existing notification business logic
         await notificationService.createFollowNotification(userId, actorId);
+        break;
+      }
+      case "mention-notification": {
+        const { userId, actorId, entityId } = job.data as MentionNotificationJobData;
+        await notificationService.createMentionNotification(userId, actorId, entityId);
         break;
       }
       default:

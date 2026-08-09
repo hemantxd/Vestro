@@ -10,7 +10,7 @@ export const postController = {
         return;
       }
 
-      const { text } = req.body;
+      const { text, ticker } = req.body;
 
       let mediaUrls: { url: string; type: "image" | "video" }[] | undefined;
       const files = (req as any).files as Express.Multer.File[] | undefined;
@@ -22,7 +22,7 @@ export const postController = {
         }));
       }
 
-      const post = await postService.createPost(req.user.userId, { text }, mediaUrls);
+      const post = await postService.createPost(req.user.userId, { text, ticker }, mediaUrls);
       res.status(201).json({ status: "success", data: post });
     } catch (error) {
       next(error);
@@ -63,6 +63,19 @@ export const postController = {
       const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined;
 
       const posts = await postService.getUserPosts(userId as string, req.user?.userId, { limit: limit as any, page: page as any });
+      res.status(200).json({ status: "success", data: posts });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getPostsByTicker(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { ticker } = req.params;
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined;
+
+      const posts = await postService.getPostsByTicker(ticker as string, req.user?.userId, { limit: limit as any, page: page as any });
       res.status(200).json({ status: "success", data: posts });
     } catch (error) {
       next(error);

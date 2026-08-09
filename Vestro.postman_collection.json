@@ -456,7 +456,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"text\": \"Hello world! This is my first post.\"\n}"
+              "raw": "{\n  \"text\": \"Hello world! This is my first post. @johndoe check this out!\",\n  \"ticker\": \"AAPL\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/posts",
@@ -481,6 +481,11 @@
                   "value": "Check out this photo!"
                 },
                 {
+                  "key": "ticker",
+                  "type": "text",
+                  "value": "TSLA"
+                },
+                {
                   "key": "media",
                   "type": "file",
                   "src": ""
@@ -491,6 +496,22 @@
               "raw": "{{base_url}}/api/v1/posts",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "posts"]
+            }
+          }
+        },
+        {
+          "name": "Get Posts by Ticker",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/posts/ticker/AAPL?limit=20&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "posts", "ticker", "AAPL"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "page", "value": "1" }
+              ]
             }
           }
         },

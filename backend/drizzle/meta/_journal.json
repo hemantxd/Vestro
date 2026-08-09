@@ -8,6 +8,13 @@
       "when": 1784911834275,
       "tag": "0000_awesome_karnak",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786196098252,
+      "tag": "0001_pink_enchantress",
+      "breakpoints": true
     }
   ]
 }
