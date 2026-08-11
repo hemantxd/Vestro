@@ -1,13 +1,13 @@
 import { db } from "../../db/index.js";
 import { eq, and, desc, inArray, sql } from "drizzle-orm";
-import { posts, postMedia } from "../../db/schema/posts.js";
+import { posts, postMedia, postTickers } from "../../db/schema/posts.js";
 import { users } from "../../db/schema/users.js";
 
 export const postRepository = {
   async create(data: {
     authorId: string;
     text?: string | null;
-    ticker?: string | null;
+    currency?: string | null;
     hasMedia: boolean;
     mediaType?: string | null;
   }) {
@@ -16,12 +16,36 @@ export const postRepository = {
       .values({
         authorId: data.authorId,
         text: data.text || null,
-        ticker: data.ticker ? data.ticker.toUpperCase() : null,
+        currency: data.currency || "USD",
         hasMedia: data.hasMedia,
         mediaType: data.mediaType || null,
       })
       .returning();
     return post;
+  },
+
+  async addTickers(postId: string, tickers: string[]) {
+    if (tickers.length === 0) return;
+    await db.insert(postTickers).values(
+      tickers.map((ticker, index) => ({
+        postId,
+        ticker,
+        orderIndex: index,
+      }))
+    );
+  },
+
+  async getTickersForPosts(postIds: string[]) {
+    if (postIds.length === 0) return [];
+    return db
+      .select({
+        postId: postTickers.postId,
+        ticker: postTickers.ticker,
+        orderIndex: postTickers.orderIndex,
+      })
+      .from(postTickers)
+      .where(inArray(postTickers.postId, postIds))
+      .orderBy(postTickers.orderIndex);
   },
 
   async addMedia(mediaItems: {
@@ -53,7 +77,7 @@ export const postRepository = {
         authorDisplayName: users.displayName,
         authorAvatar: users.avatar,
         text: posts.text,
-        ticker: posts.ticker,
+        currency: posts.currency,
         hasMedia: posts.hasMedia,
         mediaType: posts.mediaType,
         likesCount: posts.likesCount,
@@ -92,7 +116,7 @@ export const postRepository = {
         authorDisplayName: users.displayName,
         authorAvatar: users.avatar,
         text: posts.text,
-        ticker: posts.ticker,
+        currency: posts.currency,
         hasMedia: posts.hasMedia,
         mediaType: posts.mediaType,
         likesCount: posts.likesCount,
@@ -126,7 +150,7 @@ export const postRepository = {
         authorDisplayName: users.displayName,
         authorAvatar: users.avatar,
         text: posts.text,
-        ticker: posts.ticker,
+        currency: posts.currency,
         hasMedia: posts.hasMedia,
         mediaType: posts.mediaType,
         likesCount: posts.likesCount,
@@ -152,6 +176,12 @@ export const postRepository = {
     const page = options?.page || 1;
     const offset = (page - 1) * limit;
 
+    // Find post ids tagged with the ticker, then page over the posts.
+    const postIds = db
+      .select({ id: postTickers.postId })
+      .from(postTickers)
+      .where(eq(postTickers.ticker, ticker.toUpperCase()));
+
     const results = await db
       .select({
         id: posts.id,
@@ -160,7 +190,7 @@ export const postRepository = {
         authorDisplayName: users.displayName,
         authorAvatar: users.avatar,
         text: posts.text,
-        ticker: posts.ticker,
+        currency: posts.currency,
         hasMedia: posts.hasMedia,
         mediaType: posts.mediaType,
         likesCount: posts.likesCount,
@@ -170,7 +200,7 @@ export const postRepository = {
       })
       .from(posts)
       .innerJoin(users, eq(posts.authorId, users.id))
-      .where(eq(posts.ticker, ticker.toUpperCase()))
+      .where(inArray(posts.id, postIds))
       .orderBy(desc(posts.createdAt))
       .limit(limit)
       .offset(offset);

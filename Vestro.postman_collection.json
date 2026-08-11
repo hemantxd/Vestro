@@ -456,7 +456,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"text\": \"Hello world! This is my first post. @johndoe check this out!\",\n  \"ticker\": \"AAPL\"\n}"
+              "raw": "{\n  \"text\": \"Hello world! This is my first post. @johndoe check this out!\",\n  \"tickers\": [\"AAPL\", \"TSLA\"], \"currency\": \"USD\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/posts",
@@ -481,9 +481,9 @@
                   "value": "Check out this photo!"
                 },
                 {
-                  "key": "ticker",
+                  "key": "tickers",
                   "type": "text",
-                  "value": "TSLA"
+                  "value": "AAPL,TSLA"
                 },
                 {
                   "key": "media",

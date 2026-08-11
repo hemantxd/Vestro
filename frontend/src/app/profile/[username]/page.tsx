@@ -5,10 +5,13 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import AppNavbar from "@/components/app/AppNavbar";
 import FollowListModal from "@/components/app/FollowListModal";
+import PostCard from "@/components/app/PostCard";
 import { userApi } from "@/lib/api/user";
 import { followApi } from "@/lib/api/follow";
+import { postApi } from "@/lib/api/post";
 import { useAuthStore } from "@/store/auth-store";
 import type { UserProfile } from "@/types/user";
+import type { Post } from "@/types/post";
 
 export default function ProfilePage() {
   const params = useParams();
@@ -208,9 +211,9 @@ export default function ProfilePage() {
           </button>
         </div>
 
-        {/* Posts placeholder */}
-        <div className="py-12 text-center">
-          <p className="text-sm text-white/30">No posts yet.</p>
+        {/* Posts */}
+        <div className="py-6">
+          <UserPosts key={profile.id} userId={profile.id} isOwnProfile={isOwnProfile} />
         </div>
       </div>
 
@@ -225,3 +228,65 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+// Owns the profile's posts list state; remounted via `key` when the profile
+// changes so the loading state (default `true`) starts fresh.
+function UserPosts({
+  userId,
+  isOwnProfile,
+}: {
+  userId: string;
+  isOwnProfile: boolean;
+}) {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    postApi
+      .getUserPosts(userId, { limit: 20, page: 1 })
+      .then((data) => {
+        if (!cancelled) setPosts(data);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="w-8 h-8 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (posts.length === 0) {
+    return (
+      <div className="py-12 text-center">
+        <p className="text-sm text-white/30">
+          {isOwnProfile ? "You haven't posted anything yet." : "No posts yet."}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {posts.map((post) => (
+        <PostCard
+          key={post.id}
+          post={post}
+          onDeleted={(postId) =>
+            setPosts((prev) => prev.filter((p) => p.id !== postId))
+          }
+        />
+      ))}
+    </div>
+  );
+}
+

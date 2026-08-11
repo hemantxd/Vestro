@@ -6,6 +6,57 @@ import { userRepository } from "../users/user.repository.js";
 import { enqueueMentionNotification } from "../../infrastructure/queue/queues/notification.queue.js";
 import type { CreatePostInput } from "./post.types.js";
 
+const MAX_TICKERS = 5;
+const CURRENCY_SYMBOLS_REGEX = /[$₹¥€£₩₺₽₫₱₿]/g;
+const SUPPORTED_CURRENCIES = new Set([
+  "USD",
+  "INR",
+  "JPY",
+  "EUR",
+  "GBP",
+  "AUD",
+  "CAD",
+  "SGD",
+  "CHF",
+  "CNY",
+  "KRW",
+  "HKD",
+]);
+
+// Tickers are plain symbols — currency symbols ("$", "₹", "¥", ...) are
+// stripped so "$AAPL" becomes "AAPL". Returns unique, uppercased tickers.
+function normalizeTickers(tickers?: string[]): string[] {
+  if (!tickers || tickers.length === 0) return [];
+  const seen = new Set<string>();
+  const normalized: string[] = [];
+
+  for (const raw of tickers) {
+    const cleaned = (raw || "")
+      .replace(CURRENCY_SYMBOLS_REGEX, "")
+      .replace(/[\s,;]+/g, "")
+      .toUpperCase()
+      .slice(0, 20);
+
+    if (cleaned && !seen.has(cleaned)) {
+      seen.add(cleaned);
+      normalized.push(cleaned);
+    }
+    if (normalized.length >= MAX_TICKERS) break;
+  }
+
+  return normalized;
+}
+
+// Currency is stored separately from tickers and defaults to "USD".
+function normalizeCurrency(currency?: string): string {
+  const cleaned = (currency || "")
+    .replace(CURRENCY_SYMBOLS_REGEX, "")
+    .trim()
+    .toUpperCase()
+    .slice(0, 10);
+  return SUPPORTED_CURRENCIES.has(cleaned) ? cleaned : "USD";
+}
+
 async function attachIsLiked(posts: any[], userId?: string) {
   if (!userId || posts.length === 0) return posts;
 
@@ -15,6 +66,24 @@ async function attachIsLiked(posts: any[], userId?: string) {
   return posts.map((post: any) => ({
     ...post,
     isLiked: rows.has(post.id),
+  }));
+}
+
+// Attach each post's list of tickers (ordered as they were added).
+async function attachTickers<T extends { id: string }>(posts: T[]): Promise<T[]> {
+  if (posts.length === 0) return posts;
+
+  const rows = await postRepository.getTickersForPosts(posts.map((p) => p.id));
+  const tickersByPost = new Map<string, string[]>();
+  for (const row of rows) {
+    const list = tickersByPost.get(row.postId) ?? [];
+    list.push(row.ticker);
+    tickersByPost.set(row.postId, list);
+  }
+
+  return posts.map((post) => ({
+    ...post,
+    tickers: tickersByPost.get(post.id) ?? [],
   }));
 }
 
@@ -45,6 +114,8 @@ async function notifyMentionedUsers(text: string, actorId: string, postId: strin
 
 export const postService = {
   async createPost(authorId: string, input: CreatePostInput, mediaUrls?: { url: string; type: "image" | "video" }[]) {
+    const tickers = normalizeTickers(input.tickers);
+    const currency = normalizeCurrency(input.currency);
     const hasMedia = mediaUrls && mediaUrls.length > 0;
     let mediaType: string | null = null;
 
@@ -57,10 +128,14 @@ export const postService = {
     const post = await postRepository.create({
       authorId,
       text: input.text || null,
-      ticker: input.ticker || null,
+      currency,
       hasMedia: !!hasMedia,
       mediaType,
     });
+
+    if (tickers.length > 0) {
+      await postRepository.addTickers(post.id, tickers);
+    }
 
     if (hasMedia) {
       await postRepository.addMedia(
@@ -91,9 +166,10 @@ export const postService = {
 
     const media = await postRepository.getMediaForPost(postId);
     const enriched = await attachIsLiked([post], currentUserId);
+    const [withTickers] = await attachTickers(enriched);
 
     return {
-      ...enriched[0],
+      ...withTickers,
       media,
     };
   },
@@ -112,7 +188,8 @@ export const postService = {
       }))
     );
 
-    return attachIsLiked(postsWithMedia, userId);
+    const withTickers = await attachTickers(postsWithMedia);
+    return attachIsLiked(withTickers, userId);
   },
 
   async getUserPosts(authorId: string, currentUserId?: string, options?: { limit?: number; page?: number }) {
@@ -125,7 +202,8 @@ export const postService = {
       }))
     );
 
-    return attachIsLiked(postsWithMedia, currentUserId);
+    const withTickers = await attachTickers(postsWithMedia);
+    return attachIsLiked(withTickers, currentUserId);
   },
 
   async getPostsByTicker(ticker: string, currentUserId?: string, options?: { limit?: number; page?: number }) {
@@ -138,7 +216,8 @@ export const postService = {
       }))
     );
 
-    return attachIsLiked(postsWithMedia, currentUserId);
+    const withTickers = await attachTickers(postsWithMedia);
+    return attachIsLiked(withTickers, currentUserId);
   },
 
   async deletePost(postId: string, userId: string) {

@@ -29,9 +29,13 @@ export async function apiRequest<T>(
   const token = getAccessToken();
 
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
     ...(options.headers as Record<string, string> | undefined),
   };
+
+  // Let the browser set the boundary header for multipart/form-data uploads.
+  if (!(options.body instanceof FormData) && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
 
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;

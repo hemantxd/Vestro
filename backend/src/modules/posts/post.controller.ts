@@ -10,7 +10,18 @@ export const postController = {
         return;
       }
 
-      const { text, ticker } = req.body;
+      const { text, currency } = req.body;
+
+      // Accept an array of tickers (JSON / multiple multipart fields) or a
+      // single comma/space separated string. Symbols like "$" are stripped
+      // later in the service — tickers never include a currency.
+      let tickers: string[] = [];
+      if (req.body.tickers !== undefined) {
+        const raw = Array.isArray(req.body.tickers)
+          ? req.body.tickers
+          : [String(req.body.tickers)];
+        tickers = raw.flatMap((t: unknown) => String(t).split(/[,; ]+/)).filter(Boolean);
+      }
 
       let mediaUrls: { url: string; type: "image" | "video" }[] | undefined;
       const files = (req as any).files as Express.Multer.File[] | undefined;
@@ -22,7 +33,7 @@ export const postController = {
         }));
       }
 
-      const post = await postService.createPost(req.user.userId, { text, ticker }, mediaUrls);
+      const post = await postService.createPost(req.user.userId, { text, tickers, currency }, mediaUrls);
       res.status(201).json({ status: "success", data: post });
     } catch (error) {
       next(error);

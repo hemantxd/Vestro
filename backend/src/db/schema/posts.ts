@@ -6,7 +6,6 @@ import {
   boolean,
   integer,
   timestamp,
-  jsonb,
   index,
 } from "drizzle-orm/pg-core";
 import { users } from "./users.js";
@@ -22,9 +21,9 @@ export const posts = pgTable(
 
     text: text("text"),
 
-    // Stock ticker associated with the post (e.g. "AAPL", "TSLA")
-    // Used as a tag to group/filter posts by ticker
-    ticker: varchar("ticker", { length: 20 }),
+    // Currency the post is denominated in (e.g. "USD", "INR", "JPY").
+    // Kept separate from tickers — tickers never include a currency symbol.
+    currency: varchar("currency", { length: 10 }).default("USD").notNull(),
 
     // Media is stored in post_media table, but we keep a quick reference
     hasMedia: boolean("has_media").default(false),
@@ -43,7 +42,29 @@ export const posts = pgTable(
   (table) => [
     index("post_author_idx").on(table.authorId),
     index("post_created_idx").on(table.createdAt),
-    index("post_ticker_idx").on(table.ticker),
+  ]
+);
+
+// Tickers live in their own table so a post can be tagged with multiple
+// symbols ("$AAPL" is entered as the plain ticker "AAPL", currency is separate).
+export const postTickers = pgTable(
+  "post_tickers",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+
+    postId: uuid("post_id")
+      .references(() => posts.id, { onDelete: "cascade" })
+      .notNull(),
+
+    ticker: varchar("ticker", { length: 20 }).notNull(),
+
+    orderIndex: integer("order_index").default(0),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("ticker_post_idx").on(table.postId),
+    index("post_tickers_ticker_idx").on(table.ticker),
   ]
 );
 

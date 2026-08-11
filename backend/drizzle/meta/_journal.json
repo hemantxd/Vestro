@@ -15,6 +15,20 @@
       "when": 1786196098252,
       "tag": "0001_pink_enchantress",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786444333864,
+      "tag": "0002_multi_tickers_currency",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786444389594,
+      "tag": "0003_drop_legacy_ticker",
+      "breakpoints": true
     }
   ]
 }
