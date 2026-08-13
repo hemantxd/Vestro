@@ -130,8 +130,15 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
         </Link>
         <div className="flex-1 min-w-0">
           <Link href={`/profile/${post.authorUsername}`} className="block">
-            <p className="text-xs font-semibold text-white truncate">
-              {post.authorDisplayName || post.authorUsername}
+            <p className="text-xs truncate">
+              {post.authorDisplayName ? (
+                <>
+                  <span className="font-semibold text-white">{post.authorDisplayName}</span>
+                  <span className="text-white/40"> @{post.authorUsername}</span>
+                </>
+              ) : (
+                <span className="text-white/40">@{post.authorUsername}</span>
+              )}
             </p>
           </Link>
           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
