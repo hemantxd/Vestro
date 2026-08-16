@@ -6,3 +6,4 @@ export * from "./notifications.js";
 export * from "./likes.js";
 export * from "./comments.js";
 export * from "./comment-likes.js";
+export * from "./otps.js";

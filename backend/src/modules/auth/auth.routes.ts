@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authController } from "./auth.controller.js";
 import { validate } from "../../middleware/validate.middleware.js";
 import { authenticate } from "../../middleware/auth.middleware.js";
-import { registerSchema, loginSchema, googleLoginSchema } from "./auth.schema.js";
+import { registerSchema, loginSchema, googleLoginSchema, forgotPasswordSchema, resetPasswordSchema } from "./auth.schema.js";
 
 const router = Router();
 
@@ -13,5 +13,9 @@ router.post("/refresh", authController.refresh as any);
 router.post("/logout", authController.logout as any);
 router.post("/logout-all", authenticate as any, authController.logoutAll as any);
 router.get("/me", authenticate as any, authController.me as any);
+
+// Public password-reset routes
+router.post("/forgot-password", validate(forgotPasswordSchema as any), authController.forgotPassword as any);
+router.post("/reset-password", validate(resetPasswordSchema as any), authController.resetPassword as any);
 
 export default router;

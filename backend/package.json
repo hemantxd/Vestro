@@ -10,7 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "email:test": "tsx scripts/email-test.ts"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +37,7 @@
     "pg": "^8.22.0",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
+    "resend": "^6.20.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

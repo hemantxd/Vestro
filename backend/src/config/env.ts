@@ -19,6 +19,11 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
 
+  RESEND_API_KEY: z.string().optional(),
+  // Resend sender. Development uses Resend's shared sender (no custom domain
+  // or DNS verification needed). Format: "Name <email>".
+  EMAIL_FROM: z.string().default("Vestro <onboarding@resend.dev>"),
+
   GOOGLE_CLIENT_ID: z.string().optional(),
 });
 

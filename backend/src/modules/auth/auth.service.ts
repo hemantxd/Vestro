@@ -6,7 +6,15 @@ import { env } from "../../config/env.js";
 import { authRepository } from "./auth.repository.js";
 import { userRepository } from "../users/user.repository.js";
 import { AppError } from "../../common/errors/AppError.js";
+import { emailService } from "../../lib/email.service.js";
 import type { RegisterInput, LoginInput, AuthTokens } from "./auth.types.js";
+
+const OTP_EXPIRY_MINUTES = 15;
+const OTP_LENGTH = 6;
+
+function generateOtp(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 let googleClient: OAuth2Client | null = null;
 if (env.GOOGLE_CLIENT_ID) {
@@ -161,6 +169,50 @@ export const authService = {
 
   async logoutAllSessions(userId: string): Promise<void> {
     await authRepository.deleteUserSessions(userId);
+  },
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await authRepository.findUserByEmail(email);
+    if (!user) {
+      // Don't reveal whether the email exists — just silently succeed.
+      return;
+    }
+
+    const otp = generateOtp();
+    const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
+
+    await authRepository.createOtp({
+      userId: user.id,
+      otp,
+      type: "password_reset",
+      expiresAt,
+    });
+
+    await emailService.sendPasswordResetOtp(email, otp);
+  },
+
+  async resetPassword(email: string, otp: string, password: string): Promise<void> {
+    const user = await authRepository.findUserByEmail(email);
+    if (!user) {
+      throw new AppError("Invalid or expired OTP", 400);
+    }
+
+    const validOtp = await authRepository.findValidOtp(
+      user.id,
+      otp,
+      "password_reset"
+    );
+    if (!validOtp) {
+      throw new AppError("Invalid or expired OTP", 400);
+    }
+
+    const passwordHash = await argon2.hash(password);
+
+    await authRepository.updatePassword(user.id, passwordHash);
+    await authRepository.markOtpUsed(validOtp.id);
+
+    // Invalidate all existing sessions so the user is forced to re-login.
+    await authRepository.deleteUserSessions(user.id);
   },
 };
 

@@ -1,7 +1,8 @@
 import { db } from "../../db/index.js";
-import { eq, and } from "drizzle-orm";
+import { eq, and, isNull, gt } from "drizzle-orm";
 import { users } from "../../db/schema/users.js";
 import { sessions } from "../../db/schema/sessions.js";
+import { otps } from "../../db/schema/otps.js";
 
 export const authRepository = {
   async findUserByEmail(email: string) {
@@ -108,5 +109,39 @@ export const authRepository = {
 
   async deleteUserSessions(userId: string) {
     await db.delete(sessions).where(eq(sessions.userId, userId));
+  },
+
+  async createOtp(data: { userId: string; otp: string; type: string; expiresAt: Date }) {
+    const [record] = await db
+      .insert(otps)
+      .values(data)
+      .returning();
+    return record;
+  },
+
+  async findValidOtp(userId: string, otp: string, type: string) {
+    return db.query.otps.findFirst({
+      where: and(
+        eq(otps.userId, userId),
+        eq(otps.otp, otp),
+        eq(otps.type, type),
+        isNull(otps.usedAt),
+        gt(otps.expiresAt, new Date())
+      ),
+    });
+  },
+
+  async markOtpUsed(id: string) {
+    await db
+      .update(otps)
+      .set({ usedAt: new Date() })
+      .where(eq(otps.id, id));
+  },
+
+  async updatePassword(userId: string, passwordHash: string) {
+    await db
+      .update(users)
+      .set({ passwordHash })
+      .where(eq(users.id, userId));
   },
 };

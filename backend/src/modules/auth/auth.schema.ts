@@ -15,3 +15,13 @@ export const loginSchema = z.object({
 export const googleLoginSchema = z.object({
   idToken: z.string().min(1, "Google ID token is required"),
 });
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+export const resetPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  otp: z.string().length(6, "OTP must be 6 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});

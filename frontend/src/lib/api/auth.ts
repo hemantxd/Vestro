@@ -37,6 +37,20 @@ export const authApi = {
     return res.data.accessToken;
   },
 
+  async forgotPassword(email: string): Promise<void> {
+    await apiRequest<{ status: string; message: string }>("/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  async resetPassword(email: string, otp: string, password: string): Promise<void> {
+    await apiRequest<{ status: string; message: string }>("/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({ email, otp, password }),
+    });
+  },
+
   async logout(): Promise<void> {
     try {
       await apiRequest<{ status: string }>("/auth/logout", {
