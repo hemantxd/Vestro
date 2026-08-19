@@ -6,7 +6,7 @@ import { env } from "../../config/env.js";
 import { authRepository } from "./auth.repository.js";
 import { userRepository } from "../users/user.repository.js";
 import { AppError } from "../../common/errors/AppError.js";
-import { emailService } from "../../lib/email.service.js";
+import { enqueuePasswordResetEmail } from "../../infrastructure/queue/queues/email.queue.js";
 import type { RegisterInput, LoginInput, AuthTokens } from "./auth.types.js";
 
 const OTP_EXPIRY_MINUTES = 15;
@@ -188,7 +188,9 @@ export const authService = {
       expiresAt,
     });
 
-    await emailService.sendPasswordResetOtp(email, otp);
+    // Fire-and-forget: hand the email off to the BullMQ email worker so the
+    // request does not block on the external email send.
+    await enqueuePasswordResetEmail(email, otp);
   },
 
   async resetPassword(email: string, otp: string, password: string): Promise<void> {

@@ -3,6 +3,7 @@ import app from "./app.js";
 import { env } from "./config/env.js";
 import { logger } from "./config/logger.js";
 import "./infrastructure/queue/workers/notification.worker.js";
+import "./infrastructure/queue/workers/email.worker.js";
 
 const start = async () => {
   try {
