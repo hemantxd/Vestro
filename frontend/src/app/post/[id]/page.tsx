@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import AppNavbar from "@/components/app/AppNavbar";
 import PostCard from "@/components/app/PostCard";
+import CommentSection from "@/components/app/CommentSection";
 import { postApi } from "@/lib/api/post";
 import type { Post } from "@/types/post";
 
@@ -16,6 +17,10 @@ export default function PostPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const handleCommentsCountChange = (delta: number) => {
+    setPost((prev) => (prev ? { ...prev, commentsCount: Math.max(0, prev.commentsCount + delta) } : prev));
+  };
 
   useEffect(() => {
     if (!postId) return;
@@ -62,13 +67,21 @@ export default function PostPage() {
             </button>
           </div>
         ) : (
-          <PostCard
-            post={post}
-            onDeleted={() => {
-              setPost(null);
-              setError("Post deleted.");
-            }}
-          />
+          <>
+            <PostCard
+              post={post}
+              onDeleted={() => {
+                setPost(null);
+                setError("Post deleted.");
+              }}
+            />
+            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 mt-4">
+              <CommentSection
+                postId={post.id}
+                onCommentsCountChange={handleCommentsCountChange}
+              />
+            </div>
+          </>
         )}
 
         <div className="mt-6 text-center">

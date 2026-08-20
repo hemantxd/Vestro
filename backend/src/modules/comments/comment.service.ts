@@ -1,6 +1,7 @@
 import { AppError } from "../../common/errors/AppError.js";
 import { commentRepository } from "./comment.repository.js";
 import { postRepository } from "../posts/post.repository.js";
+import { enqueueCommentNotification } from "../../infrastructure/queue/queues/notification.queue.js";
 import type { CreateCommentInput } from "./comment.types.js";
 
 export const commentService = {
@@ -30,6 +31,17 @@ export const commentService = {
     });
 
     await commentRepository.syncCommentsCount(postId);
+
+    // Fire-and-forget: notify the post author (top-level comment) or the
+    // parent comment author (reply). Processed asynchronously by the worker.
+    if (input.parentId) {
+      const parent = await commentRepository.findById(input.parentId);
+      if (parent) {
+        await enqueueCommentNotification(parent.authorId, authorId, comment.id, "comment", comment.text);
+      }
+    } else {
+      await enqueueCommentNotification(post.authorId, authorId, postId, "post", comment.text);
+    }
 
     return comment;
   },

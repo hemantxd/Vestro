@@ -2,7 +2,7 @@ import { Worker, Job } from "bullmq";
 import { bullmqConnection } from "../bullmq.js";
 import { notificationService } from "../../../modules/notifications/notification.service.js";
 import { logger } from "../../../config/logger.js";
-import type { FollowNotificationJobData, MentionNotificationJobData } from "../queues/notification.queue.js";
+import type { FollowNotificationJobData, MentionNotificationJobData, LikeNotificationJobData, CommentNotificationJobData } from "../queues/notification.queue.js";
 
 export const notificationWorker = new Worker(
   "notifications",
@@ -17,6 +17,16 @@ export const notificationWorker = new Worker(
       case "mention-notification": {
         const { userId, actorId, entityId } = job.data as MentionNotificationJobData;
         await notificationService.createMentionNotification(userId, actorId, entityId);
+        break;
+      }
+      case "like-notification": {
+        const { userId, actorId, entityId, entityType } = job.data as LikeNotificationJobData;
+        await notificationService.createLikeNotification(userId, actorId, entityId, entityType);
+        break;
+      }
+      case "comment-notification": {
+        const { userId, actorId, entityId, entityType, commentText } = job.data as CommentNotificationJobData;
+        await notificationService.createCommentNotification(userId, actorId, entityId, entityType, commentText);
         break;
       }
       default:

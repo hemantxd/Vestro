@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { postApi } from "@/lib/api/post";
+import { likeApi } from "@/lib/api/like";
 import { getCurrency } from "@/constants/currencies";
 import { useAuthStore } from "@/store/auth-store";
 import type { Post, PostMedia } from "@/types/post";
@@ -98,6 +99,38 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
   const [deleteError, setDeleteError] = useState("");
 
   const isOwnPost = currentUserId === post.authorId;
+
+  // Local like state so we can optimistically update without mutating props.
+  const [liked, setLiked] = useState(Boolean(post.isLiked));
+  const [likesCount, setLikesCount] = useState(post.likesCount);
+  const [likeBusy, setLikeBusy] = useState(false);
+
+  const handleLike = async () => {
+    if (likeBusy) return;
+    // Optimistic toggle
+    const nextLiked = !liked;
+    setLiked(nextLiked);
+    setLikesCount((count) => Math.max(0, count + (nextLiked ? 1 : -1)));
+    setLikeBusy(true);
+    try {
+      const result = await likeApi.togglePostLike(post.id);
+      // Reconcile with the server truth
+      setLiked(result.liked);
+      setLikesCount((count) =>
+        result.liked === nextLiked
+          ? count
+          : result.liked
+          ? count + 1
+          : Math.max(0, count - 1)
+      );
+    } catch {
+      // Revert on failure
+      setLiked(!nextLiked);
+      setLikesCount((count) => Math.max(0, count + (nextLiked ? -1 : 1)));
+    } finally {
+      setLikeBusy(false);
+    }
+  };
 
   const handleDelete = async () => {
     if (!window.confirm("Delete this post?")) return;
@@ -199,13 +232,16 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
       {/* Post actions */}
       <div className="flex items-center gap-4 px-4 py-2 border-t border-white/5">
         <button
-          onClick={() => router.push(`/post/${post.id}`)}
-          className="flex items-center gap-1 text-white/40 hover:text-red-400 transition-colors text-xs"
+          onClick={handleLike}
+          aria-label={liked ? "Unlike post" : "Like post"}
+          className={`flex items-center gap-1 transition-colors text-xs ${
+            liked ? "text-red-500" : "text-white/40 hover:text-red-400"
+          }`}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill={post.isLiked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
             <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />
           </svg>
-          <span>{post.likesCount}</span>
+          <span>{likesCount}</span>
         </button>
         <button
           onClick={() => router.push(`/post/${post.id}`)}
