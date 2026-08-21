@@ -74,4 +74,14 @@ export const likeController = {
       next(error);
     }
   },
+
+  async getCommentLikers(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { commentId } = req.params;
+      const likers = await likeService.getCommentLikers(commentId as string);
+      res.status(200).json({ status: "success", data: likers });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

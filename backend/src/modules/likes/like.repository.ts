@@ -39,6 +39,20 @@ export const likeRepository = {
       .orderBy(sql`${likes.createdAt} DESC`);
   },
 
+  async getCommentLikers(commentId: string) {
+    return db
+      .select({
+        id: users.id,
+        username: users.username,
+        displayName: users.displayName,
+        avatar: users.avatar,
+      })
+      .from(commentLikes)
+      .innerJoin(users, eq(commentLikes.userId, users.id))
+      .where(eq(commentLikes.commentId, commentId))
+      .orderBy(sql`${commentLikes.createdAt} DESC`);
+  },
+
   async getUserLikedPostIds(userId: string, postIds: string[]): Promise<Set<string>> {
     if (postIds.length === 0) return new Set();
     const rows = await db

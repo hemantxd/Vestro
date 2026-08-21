@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { postApi } from "@/lib/api/post";
 import { likeApi } from "@/lib/api/like";
+import LikersModal from "@/components/app/LikersModal";
 import { getCurrency } from "@/constants/currencies";
 import { useAuthStore } from "@/store/auth-store";
 import type { Post, PostMedia } from "@/types/post";
@@ -104,6 +105,7 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
   const [liked, setLiked] = useState(Boolean(post.isLiked));
   const [likesCount, setLikesCount] = useState(post.likesCount);
   const [likeBusy, setLikeBusy] = useState(false);
+  const [showLikers, setShowLikers] = useState(false);
 
   const handleLike = async () => {
     if (likeBusy) return;
@@ -231,18 +233,27 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
 
       {/* Post actions */}
       <div className="flex items-center gap-4 px-4 py-2 border-t border-white/5">
-        <button
-          onClick={handleLike}
-          aria-label={liked ? "Unlike post" : "Like post"}
-          className={`flex items-center gap-1 transition-colors text-xs ${
-            liked ? "text-red-500" : "text-white/40 hover:text-red-400"
-          }`}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
-            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />
-          </svg>
-          <span>{likesCount}</span>
-        </button>
+        <div className="flex items-center gap-0.5">
+          <button
+            onClick={handleLike}
+            aria-label={liked ? "Unlike post" : "Like post"}
+            className={`transition-colors ${liked ? "text-red-500" : "text-white/40 hover:text-red-400"}`}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
+              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />
+            </svg>
+          </button>
+          <button
+            onClick={() => likesCount > 0 && setShowLikers(true)}
+            disabled={likesCount === 0}
+            aria-label="View post likers"
+            className={`text-xs transition-colors disabled:cursor-default ${
+              likesCount > 0 ? "text-white/40 hover:text-[#00C853]" : "text-white/20"
+            }`}
+          >
+            {likesCount}
+          </button>
+        </div>
         <button
           onClick={() => router.push(`/post/${post.id}`)}
           className="flex items-center gap-1 text-white/40 hover:text-[#00C853] transition-colors text-xs"
@@ -264,6 +275,14 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
           <span>{post.sharesCount}</span>
         </button>
       </div>
+
+      {/* Likers modal */}
+      <LikersModal
+        open={showLikers}
+        title="Likes"
+        onClose={() => setShowLikers(false)}
+        loadLikers={() => likeApi.getPostLikers(post.id)}
+      />
     </article>
   );
 }

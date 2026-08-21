@@ -33,4 +33,11 @@ export const likeApi = {
     );
     return res.data;
   },
+
+  async getCommentLikers(commentId: string): Promise<LikeUser[]> {
+    const res = await apiRequest<{ status: string; data: LikeUser[] }>(
+      `/likes/comment/${commentId}/likers`
+    );
+    return res.data;
+  },
 };

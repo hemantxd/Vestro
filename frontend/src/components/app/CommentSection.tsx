@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { commentApi } from "@/lib/api/comment";
+import { likeApi } from "@/lib/api/like";
+import LikersModal from "@/components/app/LikersModal";
 import { useAuthStore } from "@/store/auth-store";
 import { formatRelativeTime } from "./PostCard";
 import type { Comment } from "@/types/comment";
@@ -30,6 +32,7 @@ function CommentItem({
   const [liked, setLiked] = useState(Boolean(comment.isLiked));
   const [likeCount, setLikeCount] = useState(comment.likesCount);
   const [deleting, setDeleting] = useState(false);
+  const [showLikers, setShowLikers] = useState(false);
 
   const isOwn = currentUserId === comment.authorId;
 
@@ -99,14 +102,22 @@ function CommentItem({
           )}
           <button
             onClick={handleLike}
-            className={`flex items-center gap-1 text-[10px] font-semibold transition-colors ${
-              liked ? "text-red-500" : "text-white/30 hover:text-red-400"
-            }`}
+            aria-label={liked ? "Unlike comment" : "Like comment"}
+            className={`transition-colors ${liked ? "text-red-500" : "text-white/30 hover:text-red-400"}`}
           >
-            {likeCount > 0 && <span>{likeCount}</span>}
             <svg width="11" height="11" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
               <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />
             </svg>
+          </button>
+          <button
+            onClick={() => likeCount > 0 && setShowLikers(true)}
+            disabled={likeCount === 0}
+            aria-label="View comment likers"
+            className={`text-[10px] transition-colors disabled:cursor-default ${
+              likeCount > 0 ? "text-white/40 hover:text-[#00C853]" : "text-white/20"
+            }`}
+          >
+            {likeCount}
           </button>
           {isOwn && (
             <button
@@ -134,6 +145,14 @@ function CommentItem({
             ))}
           </div>
         )}
+
+        {/* Comment likers modal */}
+        <LikersModal
+          open={showLikers}
+          title="Likes"
+          onClose={() => setShowLikers(false)}
+          loadLikers={() => likeApi.getCommentLikers(comment.id)}
+        />
       </div>
     </div>
   );

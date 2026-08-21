@@ -10,6 +10,7 @@ router.post("/:postId/toggle", authenticate as any, likeController.togglePostLik
 router.get("/:postId/status", authenticate as any, likeController.getPostLikeStatus as any);
 
 // === Comment likes ===
+router.get("/comment/:commentId/likers", likeController.getCommentLikers as any);
 router.post("/comment/:commentId/toggle", authenticate as any, likeController.toggleCommentLike as any);
 router.get("/comment/:commentId/status", authenticate as any, likeController.getCommentLikeStatus as any);
 

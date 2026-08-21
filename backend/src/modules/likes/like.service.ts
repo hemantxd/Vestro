@@ -67,4 +67,12 @@ export const likeService = {
     const existing = await likeRepository.findByUserAndComment(userId, commentId);
     return { liked: !!existing };
   },
+
+  async getCommentLikers(commentId: string) {
+    const comment = await commentRepository.findById(commentId);
+    if (!comment) {
+      throw new AppError("Comment not found", 404);
+    }
+    return likeRepository.getCommentLikers(commentId);
+  },
 };
