@@ -59,6 +59,12 @@ export const likeService = {
     } else {
       await likeRepository.createCommentLike(userId, commentId);
       await likeRepository.incrementCommentLikes(commentId);
+
+      // Fire-and-forget: notify the comment author. entityId stores the POST id
+      // (comment.postId) so the frontend can route straight to the post; the
+      // entityType "comment" keeps the notification message accurate.
+      await enqueueLikeNotification(comment.authorId, userId, comment.postId, "comment");
+
       return { liked: true };
     }
   },

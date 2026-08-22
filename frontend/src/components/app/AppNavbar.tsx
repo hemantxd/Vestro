@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
 import { userApi } from "@/lib/api/user";
+import { notificationApi } from "@/lib/api/notification";
 import type { UserProfile } from "@/types/user";
 
 export default function AppNavbar() {
@@ -12,8 +13,29 @@ export default function AppNavbar() {
   const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
   const [searching, setSearching] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const searchRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Fetch unread notification count on auth change, then poll every 30s.
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    let cancelled = false;
+    const load = () => {
+      notificationApi
+        .getUnreadCount()
+        .then((count) => {
+          if (!cancelled) setUnreadCount(count);
+        })
+        .catch(() => {});
+    };
+    load();
+    const interval = setInterval(load, 30000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [isAuthenticated]);
 
   // Close search on outside click
   useEffect(() => {
@@ -103,6 +125,19 @@ export default function AppNavbar() {
           <Link href="/explore" className="text-white/40 hover:text-[#00C853] transition-colors">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           </Link>
+          {isAuthenticated && (
+            <Link href="/notifications" className="relative text-white/40 hover:text-[#00C853] transition-colors" aria-label="Notifications">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+              </svg>
+              {unreadCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-[#00C853] text-[#0B1220] text-[10px] font-bold flex items-center justify-center">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </Link>
+          )}
           <Link href={user ? `/profile/${user.username}` : "/login"} className="text-white/40 hover:text-white transition-colors">
             {user?.avatar ? (
               <img src={user.avatar} alt="" className="w-6 h-6 rounded-full object-cover ring-1 ring-white/10" />
