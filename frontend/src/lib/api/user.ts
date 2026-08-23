@@ -1,6 +1,6 @@
 import { apiRequest } from "./client";
 import { API_BASE_URL } from "@/constants/env";
-import type { UserProfile, UpdateProfileInput } from "@/types/user";
+import type { UserProfile, UpdateProfileInput, SuggestedUser } from "@/types/user";
 
 export const userApi = {
   async getByUsername(username: string): Promise<UserProfile> {
@@ -103,6 +103,13 @@ export const userApi = {
   async searchUsers(query: string, limit = 10, page = 1): Promise<UserProfile[]> {
     const res = await apiRequest<{ status: string; data: UserProfile[] }>(
       `/users/search?q=${encodeURIComponent(query)}&limit=${limit}&page=${page}`
+    );
+    return res.data;
+  },
+
+  async getSuggested(limit = 5): Promise<SuggestedUser[]> {
+    const res = await apiRequest<{ status: string; data: SuggestedUser[] }>(
+      `/users/suggested?limit=${limit}`
     );
     return res.data;
   },

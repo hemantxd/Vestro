@@ -29,3 +29,14 @@ export interface UpdateProfileInput {
   gender?: string | null;
   phone?: string | null;
 }
+
+// Suggested "traders to follow" (from GET /users/suggested)
+export interface SuggestedUser {
+  id: string;
+  username: string;
+  displayName: string | null;
+  avatar: string | null;
+  bio: string | null;
+  followersCount: number;
+  verified: boolean;
+}

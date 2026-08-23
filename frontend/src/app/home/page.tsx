@@ -6,6 +6,7 @@ import Link from "next/link";
 import AppNavbar from "@/components/app/AppNavbar";
 import PostCard from "@/components/app/PostCard";
 import PostComposer from "@/components/app/PostComposer";
+import TradersToFollow from "@/components/app/TradersToFollow";
 import { postApi } from "@/lib/api/post";
 import { useAuthStore } from "@/store/auth-store";
 import type { Post } from "@/types/post";
@@ -273,29 +274,8 @@ function HomeContent() {
                   ))}
                 </div>
               </div>
-{/* Suggestions */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs font-semibold text-white/50">Traders to follow</p>
-                  <Link href="/explore" className="text-[10px] font-semibold text-[#00C853] hover:text-[#00E060] transition-colors">See All</Link>
-                </div>
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-white/5 overflow-hidden flex-shrink-0">
-                        <div className="w-full h-full flex items-center justify-center text-xs font-bold text-white/20">?</div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-white truncate">trader_{i}</p>
-                        <p className="text-[10px] text-white/30 truncate">New to Vestro</p>
-                      </div>
-                      <Link href="/explore" className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-[#00C853]/10 text-[#00C853] hover:bg-[#00C853]/20 transition-colors">
-                        Follow
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
+{/* Suggestions — real suggested traders */}
+              <TradersToFollow limit={3} title="Traders to follow" />
 
               {/* Footer */}
               <div className="mt-6">

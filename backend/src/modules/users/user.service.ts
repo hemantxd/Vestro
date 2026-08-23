@@ -1,6 +1,7 @@
 import { AppError } from "../../common/errors/AppError.js";
 import { userRepository } from "./user.repository.js";
 import { authRepository } from "../auth/auth.repository.js";
+import { followRepository } from "../follows/follow.repository.js";
 import { deleteCloudinaryImage } from "../../middleware/upload.middleware.js";
 import type { UpdateProfileInput } from "./user.types.js";
 
@@ -126,5 +127,18 @@ export const userService = {
   async searchUsers(query: string, options?: { limit?: number; page?: number }) {
     const results = await userRepository.searchUsers(query, options);
     return results.map(mapUser);
+  },
+
+  async getSuggestedUsers(userId: string, limit?: number) {
+    const results = await followRepository.getSuggestedUsers(userId, { limit });
+    return results.map((u) => ({
+      id: u.id,
+      username: u.username,
+      displayName: u.displayName,
+      avatar: u.avatar,
+      bio: u.bio,
+      followersCount: u.followersCount,
+      verified: u.verified,
+    }));
   },
 };

@@ -106,6 +106,38 @@ export const followRepository = {
     return row.count > 0;
   },
 
+  // Suggested "traders to follow": active users excluding yourself and
+  // everyone you already follow, most-followed first.
+  async getSuggestedUsers(userId: string, options?: { limit?: number }) {
+    const limit = options?.limit || 5;
+
+    return db
+      .select({
+        id: users.id,
+        username: users.username,
+        displayName: users.displayName,
+        avatar: users.avatar,
+        bio: users.bio,
+        followersCount: users.followersCount,
+        verified: users.verified,
+      })
+      .from(users)
+      .where(
+        and(
+          // not me
+          sql`${users.id} <> ${userId}`,
+          // not already followed
+          sql`${users.id} NOT IN (
+            SELECT ${follows.followingId} FROM ${follows}
+            WHERE ${follows.followerId} = ${userId}
+          )`,
+          eq(users.status, "active")
+        )
+      )
+      .orderBy(sql`${users.followersCount} DESC`)
+      .limit(limit);
+  },
+
   // Atomic count updates using SQL
   async incrementFollowersCount(userId: string) {
     await db

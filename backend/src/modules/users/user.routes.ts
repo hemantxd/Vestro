@@ -9,6 +9,8 @@ const router = Router();
 
 // Search must come BEFORE /:username to avoid "search" being caught as a username
 router.get("/search", authenticate, userController.searchUsers);
+// Suggested "traders to follow" — also before /:username
+router.get("/suggested", authenticate, userController.getSuggestedUsers);
 
 // Public routes
 router.get("/:username", userController.getProfileByUsername);

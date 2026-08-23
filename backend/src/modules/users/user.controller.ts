@@ -113,4 +113,19 @@ export const userController = {
       next(error);
     }
   },
+
+  async getSuggestedUsers(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        res.status(401).json({ status: "error", message: "Not authenticated" });
+        return;
+      }
+
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 5;
+      const users = await userService.getSuggestedUsers(req.user.userId, limit);
+      res.status(200).json({ status: "success", data: users });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
