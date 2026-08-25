@@ -113,6 +113,10 @@ async function notifyMentionedUsers(text: string, actorId: string, postId: strin
 }
 
 export const postService = {
+  async getTrendingTickers(limit = 8) {
+    return postRepository.getTrendingTickers(limit);
+  },
+
   async createPost(authorId: string, input: CreatePostInput, mediaUrls?: { url: string; type: "image" | "video" }[]) {
     const tickers = normalizeTickers(input.tickers);
     const currency = normalizeCurrency(input.currency);

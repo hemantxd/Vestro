@@ -3,6 +3,16 @@ import { AuthRequest } from "../../common/types/index.js";
 import { postService } from "./post.service.js";
 
 export const postController = {
+  async getTrendingTickers(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 8;
+      const tickers = await postService.getTrendingTickers(limit);
+      res.status(200).json({ status: "success", data: tickers });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async createPost(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       if (!req.user) {

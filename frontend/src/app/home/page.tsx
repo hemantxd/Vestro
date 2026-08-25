@@ -9,9 +9,10 @@ import PostComposer from "@/components/app/PostComposer";
 import TradersToFollow from "@/components/app/TradersToFollow";
 import { postApi } from "@/lib/api/post";
 import { useAuthStore } from "@/store/auth-store";
-import type { Post } from "@/types/post";
+import type { Post, TrendingTicker } from "@/types/post";
 
-const trendingTickers = ["NVDA", "TSLA", "AAPL", "GOOGL", "AMZN", "META", "MSFT", "SPY"];
+// Fallback chips shown when there isn't enough post data to compute trends.
+const DEFAULT_TICKERS = ["NVDA", "TSLA", "AAPL", "GOOGL", "AMZN", "META", "MSFT", "SPY"];
 const PAGE_SIZE = 10;
 
 interface FeedSectionProps {
@@ -143,6 +144,22 @@ function HomeContent() {
   );
   const [prevUrlTicker, setPrevUrlTicker] = useState<string | null>(urlTicker);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [trending, setTrending] = useState<TrendingTicker[]>([]);
+
+  // Load real trending tickers (most-tagged across posts). Falls back to the
+  // default chip list when there isn't enough data yet.
+  useEffect(() => {
+    let cancelled = false;
+    postApi
+      .getTrendingTickers(8)
+      .then((data) => {
+        if (!cancelled && data.length > 0) setTrending(data);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshKey]);
 
   // Keep activeTicker in sync with ?ticker= in the URL (adjust state during render)
   if (urlTicker && prevUrlTicker !== urlTicker) {
@@ -208,9 +225,20 @@ function HomeContent() {
                 <button onClick={() => setActiveTicker(null)} className={chipClass(activeTicker === null)}>
                   Following
                 </button>
-                {trendingTickers.map((ticker) => (
-                  <button key={ticker} onClick={() => toggleTicker(ticker)} className={chipClass(activeTicker === ticker)}>
+                {(trending.length > 0
+                  ? trending.map((t) => ({ ticker: t.ticker, count: t.count }))
+                  : DEFAULT_TICKERS.map((t) => ({ ticker: t, count: 0 }))
+                ).map(({ ticker, count }) => (
+                  <button
+                    key={ticker}
+                    onClick={() => toggleTicker(ticker)}
+                    className={chipClass(activeTicker === ticker)}
+                    title={count > 0 ? `${count} post${count !== 1 ? "s" : ""}` : undefined}
+                  >
                     ${ticker}
+                    {count > 0 && (
+                      <span className="ml-1 text-[9px] text-white/40 font-medium">{count}</span>
+                    )}
                   </button>
                 ))}
               </div>

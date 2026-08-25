@@ -4,6 +4,19 @@ import { posts, postMedia, postTickers } from "../../db/schema/posts.js";
 import { users } from "../../db/schema/users.js";
 
 export const postRepository = {
+  // Most-used tickers across all posts (for the "Trending" chips).
+  async getTrendingTickers(limit: number) {
+    return db
+      .select({
+        ticker: postTickers.ticker,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(postTickers)
+      .groupBy(postTickers.ticker)
+      .orderBy(sql`count(*) DESC`)
+      .limit(limit);
+  },
+
   async create(data: {
     authorId: string;
     text?: string | null;

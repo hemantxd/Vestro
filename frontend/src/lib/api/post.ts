@@ -1,5 +1,5 @@
 import { apiRequest } from "./client";
-import type { CreatePostInput, ListPostsOptions, Post } from "@/types/post";
+import type { CreatePostInput, ListPostsOptions, Post, TrendingTicker } from "@/types/post";
 
 function buildQuery(options?: ListPostsOptions): string {
   const params = new URLSearchParams();
@@ -52,6 +52,13 @@ export const postApi = {
   async getPostsByTicker(ticker: string, options?: ListPostsOptions): Promise<Post[]> {
     const res = await apiRequest<{ status: string; data: Post[] }>(
       `/posts/ticker/${encodeURIComponent(ticker)}${buildQuery(options)}`
+    );
+    return res.data;
+  },
+
+  async getTrendingTickers(limit = 8): Promise<TrendingTicker[]> {
+    const res = await apiRequest<{ status: string; data: TrendingTicker[] }>(
+      `/posts/tickers/trending?limit=${limit}`
     );
     return res.data;
   },

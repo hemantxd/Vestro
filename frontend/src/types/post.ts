@@ -37,6 +37,11 @@ export interface CreatePostInput {
   media?: File[];
 }
 
+export interface TrendingTicker {
+  ticker: string;
+  count: number;
+}
+
 export interface ListPostsOptions {
   limit?: number;
   page?: number;

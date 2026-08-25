@@ -7,6 +7,7 @@ const router = Router();
 
 // Public routes
 router.get("/ticker/:ticker", postController.getPostsByTicker as any);
+router.get("/tickers/trending", postController.getTrendingTickers as any);
 router.get("/:postId", postController.getPostById as any);
 router.get("/user/:userId", postController.getUserPosts as any);
 
