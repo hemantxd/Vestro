@@ -66,12 +66,12 @@ export default function StockFeedCard({
         <div className="absolute -inset-[1px] bg-gradient-to-b from-[#00C853]/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
 
         {/* Card */}
-        <div className="relative bg-[#0D1525]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-5 hover:border-[#00C853]/30 transition-all duration-300 shadow-xl">
+        <div className="relative bg-surface/90 backdrop-blur-xl border border-line rounded-2xl p-5 hover:border-[#00C853]/30 transition-all duration-300 shadow-xl">
           {/* Header */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <span className="text-lg">{emoji}</span>
-              <span className="font-bold text-white text-sm">{ticker}</span>
+              <span className="font-bold text-foreground text-sm">{ticker}</span>
             </div>
             <span
               className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
@@ -85,16 +85,16 @@ export default function StockFeedCard({
           {/* Target */}
           {target && (
             <div className="mb-2">
-              <span className="text-[11px] text-white/40 uppercase tracking-wider">Target</span>
+              <span className="text-[11px] text-muted-2 uppercase tracking-wider">Target</span>
               <p className="text-lg font-bold text-[#00C853]">{target}</p>
             </div>
           )}
 
           {/* Reason */}
-          <p className="text-sm text-white/70 leading-relaxed mb-4">{reason}</p>
+          <p className="text-sm text-muted leading-relaxed mb-4">{reason}</p>
 
           {/* Footer */}
-          <div className="flex items-center justify-between text-xs text-white/40">
+          <div className="flex items-center justify-between text-xs text-muted-2">
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1 hover:text-[#00C853] transition-colors">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -109,7 +109,7 @@ export default function StockFeedCard({
                 {comments}
               </span>
             </div>
-            <span className="text-white/30">@{author}</span>
+            <span className="text-muted-2">@{author}</span>
           </div>
         </div>
       </motion.div>

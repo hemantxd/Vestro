@@ -148,7 +148,7 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
   };
 
   return (
-    <article className="rounded-xl border border-white/5 bg-white/[0.02] overflow-hidden hover:border-white/10 transition-colors">
+    <article className="rounded-xl border border-line-soft bg-white/[0.02] overflow-hidden hover:border-line transition-colors">
       {/* Post header */}
       <div className="flex items-center gap-3 px-4 py-3">
         <Link
@@ -158,7 +158,7 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
           {post.authorAvatar ? (
             <img src={post.authorAvatar} alt="" className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-xs font-bold text-white/30">
+            <div className="w-full h-full flex items-center justify-center text-xs font-bold text-muted-2">
               {post.authorUsername[0].toUpperCase()}
             </div>
           )}
@@ -168,11 +168,11 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
             <p className="text-xs truncate">
               {post.authorDisplayName ? (
                 <>
-                  <span className="font-semibold text-white">{post.authorDisplayName}</span>
-                  <span className="text-white/40"> @{post.authorUsername}</span>
+                  <span className="font-semibold text-foreground">{post.authorDisplayName}</span>
+                  <span className="text-muted-2"> @{post.authorUsername}</span>
                 </>
               ) : (
-                <span className="text-white/40">@{post.authorUsername}</span>
+                <span className="text-muted-2">@{post.authorUsername}</span>
               )}
             </p>
           </Link>
@@ -186,10 +186,10 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
                 {ticker}
               </Link>
             ))}
-            <span className="text-[10px] text-white/30">
+            <span className="text-[10px] text-muted-2">
               {formatRelativeTime(post.createdAt)}
             </span>
-            <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-semibold text-white/45">
+            <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-semibold text-muted-2">
               {getCurrency(post.currency).symbol}
               <span>{post.currency}</span>
             </span>
@@ -199,7 +199,7 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
           <button
             onClick={handleDelete}
             disabled={deleting}
-            className="text-white/20 hover:text-red-400 transition-colors disabled:opacity-40"
+            className="text-faint hover:text-red-400 transition-colors disabled:opacity-40"
             aria-label="Delete post"
           >
             {deleting ? (
@@ -223,7 +223,7 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
       <Link href={`/post/${post.id}`} className="block">
         {post.text && (
           <div className="px-4 pb-3">
-            <p className="text-sm text-white/80 leading-relaxed whitespace-pre-line">
+            <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">
               {post.text}
             </p>
           </div>
@@ -232,12 +232,12 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
       </Link>
 
       {/* Post actions */}
-      <div className="flex items-center gap-4 px-4 py-2 border-t border-white/5">
+      <div className="flex items-center gap-4 px-4 py-2 border-t border-line-soft">
         <div className="flex items-center gap-0.5">
           <button
             onClick={handleLike}
             aria-label={liked ? "Unlike post" : "Like post"}
-            className={`transition-colors ${liked ? "text-red-500" : "text-white/40 hover:text-red-400"}`}
+            className={`transition-colors ${liked ? "text-red-500" : "text-muted-2 hover:text-red-400"}`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
               <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />
@@ -248,7 +248,7 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
             disabled={likesCount === 0}
             aria-label="View post likers"
             className={`text-xs transition-colors disabled:cursor-default ${
-              likesCount > 0 ? "text-white/40 hover:text-[#00C853]" : "text-white/20"
+              likesCount > 0 ? "text-muted-2 hover:text-[#00C853]" : "text-faint"
             }`}
           >
             {likesCount}
@@ -256,7 +256,7 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
         </div>
         <button
           onClick={() => router.push(`/post/${post.id}`)}
-          className="flex items-center gap-1 text-white/40 hover:text-[#00C853] transition-colors text-xs"
+          className="flex items-center gap-1 text-muted-2 hover:text-[#00C853] transition-colors text-xs"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -265,7 +265,7 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
         </button>
         <button
           onClick={() => router.push(`/post/${post.id}`)}
-          className="flex items-center gap-1 text-white/40 hover:text-[#00C853] transition-colors text-xs ml-auto"
+          className="flex items-center gap-1 text-muted-2 hover:text-[#00C853] transition-colors text-xs ml-auto"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />

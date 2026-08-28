@@ -70,7 +70,7 @@ function ExploreContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1220]">
+    <div className="min-h-screen bg-background">
       {/* Shared Navbar */}
       <AppNavbar />
 
@@ -82,7 +82,7 @@ function ExploreContent() {
             className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-colors ${
               mode === "users"
                 ? "bg-[#00C853]/20 text-[#00C853] border border-[#00C853]/40"
-                : "bg-white/5 text-white/50 border border-white/10 hover:text-white"
+                : "bg-white/5 text-muted border border-line hover:text-foreground"
             }`}
           >
             Traders
@@ -92,7 +92,7 @@ function ExploreContent() {
             className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-colors ${
               mode === "tickers"
                 ? "bg-[#00C853]/20 text-[#00C853] border border-[#00C853]/40"
-                : "bg-white/5 text-white/50 border border-white/10 hover:text-white"
+                : "bg-white/5 text-muted border border-line hover:text-foreground"
             }`}
           >
             Tickers
@@ -102,7 +102,7 @@ function ExploreContent() {
         {/* Search Input */}
         <div className="relative mb-8">
           <svg
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-2"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -119,7 +119,7 @@ function ExploreContent() {
             }
             placeholder={mode === "tickers" ? "Search ticker... e.g. AAPL" : "Search by username..."}
             autoFocus
-            className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#00C853]/50 transition-colors"
+            className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-line text-foreground placeholder:text-muted-2 text-sm focus:outline-none focus:border-[#00C853]/50 transition-colors"
           />
         </div>
 
@@ -137,13 +137,13 @@ function ExploreContent() {
           tickerResult.query === query.trim().toUpperCase() &&
           (tickerResult.items.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-white/30 text-sm">
+              <p className="text-muted-2 text-sm">
                 No posts tagged ${query.trim().toUpperCase()} yet.
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-xs text-white/30 mb-4">
+              <p className="text-xs text-muted-2 mb-4">
                 {tickerResult.items.length} post{tickerResult.items.length !== 1 ? "s" : ""} tagged {query.trim().toUpperCase()}
               </p>
               {tickerResult.items.map((post) => (
@@ -169,25 +169,25 @@ function ExploreContent() {
           userResult.query === query.trim() &&
           (userResult.items.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-white/30 text-sm">No users found for &ldquo;{query}&rdquo;</p>
+              <p className="text-muted-2 text-sm">No users found for &ldquo;{query}&rdquo;</p>
             </div>
           ) : (
             <div className="space-y-2">
-              <p className="text-xs text-white/30 mb-4">
+              <p className="text-xs text-muted-2 mb-4">
                 Found {userResult.items.length} result{userResult.items.length !== 1 ? "s" : ""}
               </p>
               {userResult.items.map((user) => (
                 <Link
                   key={user.id}
                   href={`/profile/${user.username}`}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-200 group"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-line-soft hover:bg-white/[0.04] hover:border-line transition-all duration-200 group"
                 >
                   {/* Avatar */}
                   <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
                     {user.avatar ? (
                       <img src={user.avatar} alt="" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-sm font-bold text-white/30">
+                      <div className="w-full h-full flex items-center justify-center text-sm font-bold text-muted-2">
                         {user.username[0].toUpperCase()}
                       </div>
                     )}
@@ -196,7 +196,7 @@ function ExploreContent() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-white truncate">
+                      <p className="text-sm font-semibold text-foreground truncate">
                         {user.displayName || user.username}
                       </p>
                       {user.verified && (
@@ -205,19 +205,19 @@ function ExploreContent() {
                         </svg>
                       )}
                     </div>
-                    <p className="text-xs text-white/40 truncate">@{user.username}</p>
+                    <p className="text-xs text-muted-2 truncate">@{user.username}</p>
                   </div>
 
                   {/* Bio preview */}
                   {user.bio && (
-                    <p className="text-xs text-white/30 hidden sm:block max-w-[200px] truncate">
+                    <p className="text-xs text-muted-2 hidden sm:block max-w-[200px] truncate">
                       {user.bio}
                     </p>
                   )}
 
                   {/* Arrow */}
                   <svg
-                    className="w-4 h-4 text-white/20 group-hover:text-white/40 transition-colors flex-shrink-0"
+                    className="w-4 h-4 text-faint group-hover:text-muted-2 transition-colors flex-shrink-0"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -240,7 +240,7 @@ function ExploreContent() {
           ) && (
             <div className="text-center py-12">
             <svg
-              className="w-12 h-12 text-white/10 mx-auto mb-4"
+              className="w-12 h-12 text-faint mx-auto mb-4"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -249,7 +249,7 @@ function ExploreContent() {
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.3-4.3" />
             </svg>
-            <p className="text-sm text-white/20">
+            <p className="text-sm text-faint">
               {mode === "tickers"
                 ? "Search a stock ticker to see what traders are saying"
                 : "Search for traders by username"}
@@ -265,7 +265,7 @@ export default function ExplorePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#0B1220] flex items-center justify-center">
+        <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="w-6 h-6 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
         </div>
       }

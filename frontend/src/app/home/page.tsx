@@ -82,7 +82,7 @@ function FeedSection({ ticker, onDeleted }: FeedSectionProps) {
     return (
       <div className="p-6 rounded-xl bg-white/[0.02] border border-red-400/20 text-center">
         <p className="text-sm text-red-400">{error}</p>
-        <p className="mt-3 text-xs text-white/40">{ticker ? `Posts tagged $${ticker}` : "Your feed"} could not be loaded.</p>
+        <p className="mt-3 text-xs text-muted-2">{ticker ? `Posts tagged $${ticker}` : "Your feed"} could not be loaded.</p>
       </div>
     );
   }
@@ -90,7 +90,7 @@ function FeedSection({ ticker, onDeleted }: FeedSectionProps) {
   if (posts.length === 0) {
     return (
       <div className="py-12 text-center">
-        <p className="text-sm text-white/30">
+        <p className="text-sm text-muted-2">
           {ticker
             ? `No posts tagged $${ticker} yet. Be the first to share one!`
             : "Your feed is empty. Follow traders or tag a ticker to get started."}
@@ -122,7 +122,7 @@ function FeedSection({ ticker, onDeleted }: FeedSectionProps) {
         <div className="mt-5 text-center">
           <button
             onClick={handleLoadMore}
-            className="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-white/70 hover:text-white hover:border-[#00C853]/40 text-xs font-semibold transition-colors"
+            className="px-5 py-2 rounded-full bg-white/5 border border-line text-muted hover:text-foreground hover:border-[#00C853]/40 text-xs font-semibold transition-colors"
           >
             Load more
           </button>
@@ -189,14 +189,14 @@ function HomeContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0B1220] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0B1220]">
+    <div className="min-h-screen bg-background">
       {/* Shared Navbar */}
       <AppNavbar />
 
@@ -206,7 +206,7 @@ function HomeContent() {
           {/* Feed Column */}
           <div className="flex-1 max-w-[600px] mx-auto">
             {/* Trending Tickers Marquee */}
-            <div className="mb-6 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+            <div className="mb-6 p-3 rounded-xl bg-white/[0.02] border border-line-soft">
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
                 <span className="text-[10px] font-semibold text-[#00C853] uppercase tracking-wider">
@@ -215,7 +215,7 @@ function HomeContent() {
                 {activeTicker && (
                   <button
                     onClick={() => setActiveTicker(null)}
-                    className="ml-auto text-[10px] font-semibold text-white/50 hover:text-white transition-colors"
+                    className="ml-auto text-[10px] font-semibold text-muted hover:text-foreground transition-colors"
                   >
                     Clear ${activeTicker} filter &times;
                   </button>
@@ -237,7 +237,7 @@ function HomeContent() {
                   >
                     ${ticker}
                     {count > 0 && (
-                      <span className="ml-1 text-[9px] text-white/40 font-medium">{count}</span>
+                      <span className="ml-1 text-[9px] text-muted-2 font-medium">{count}</span>
                     )}
                   </button>
                 ))}
@@ -257,21 +257,21 @@ function HomeContent() {
           <div className="hidden lg:block w-[300px] flex-shrink-0">
             <div className="fixed top-14 w-[300px] py-6 max-h-screen overflow-y-auto">
               {/* Current user */}
-              <div className="flex items-center gap-3 mb-6 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <div className="flex items-center gap-3 mb-6 p-3 rounded-xl bg-white/[0.02] border border-line-soft">
                 <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
                   {user?.avatar ? (
                     <img src={user.avatar} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-sm font-bold text-white/30">
+                    <div className="w-full h-full flex items-center justify-center text-sm font-bold text-muted-2">
                       {user?.username?.[0]?.toUpperCase() || "?"}
                     </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <Link href={`/profile/${user?.username}`} className="block">
-                    <p className="text-sm font-semibold text-white truncate">{user?.displayName || user?.username}</p>
+                    <p className="text-sm font-semibold text-foreground truncate">{user?.displayName || user?.username}</p>
                   </Link>
-                  <p className="text-xs text-white/40 truncate">@{user?.username}</p>
+                  <p className="text-xs text-muted-2 truncate">@{user?.username}</p>
                 </div>
                 <button onClick={logout} className="text-xs font-semibold text-[#00C853] hover:text-[#00E060] transition-colors">
                   Log out
@@ -279,7 +279,7 @@ function HomeContent() {
               </div>
 
               {/* Market Overview */}
-              <div className="mb-6 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <div className="mb-6 p-3 rounded-xl bg-white/[0.02] border border-line-soft">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
                   <span className="text-[10px] font-semibold text-[#00C853] uppercase tracking-wider">Market Pulse</span>
@@ -292,8 +292,8 @@ function HomeContent() {
                   ].map((s) => (
                     <div key={s.ticker} className="flex items-center justify-between py-1.5">
                       <button onClick={() => setActiveTicker(s.ticker)} className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-white">{s.ticker}</span>
-                        <span className="text-[10px] text-white/30">{s.price}</span>
+                        <span className="text-xs font-semibold text-foreground">{s.ticker}</span>
+                        <span className="text-[10px] text-muted-2">{s.price}</span>
                       </button>
                       <span className={`text-[10px] font-semibold ${s.up ? "text-[#00C853]" : "text-red-400"}`}>
                         {s.change}
@@ -307,10 +307,10 @@ function HomeContent() {
 
               {/* Footer */}
               <div className="mt-6">
-                <p className="text-[10px] text-white/20 leading-relaxed">
+                <p className="text-[10px] text-faint leading-relaxed">
                   About &middot; Privacy &middot; Terms &middot; API &middot; Help
                 </p>
-                <p className="text-[10px] text-white/20 mt-3">&copy; 2026 VESTRO</p>
+                <p className="text-[10px] text-faint mt-3">&copy; 2026 VESTRO</p>
               </div>
             </div>
           </div>
@@ -324,7 +324,7 @@ export default function HomePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#0B1220] flex items-center justify-center">
+        <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="w-8 h-8 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
         </div>
       }

@@ -63,7 +63,7 @@ const features = [
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="relative py-32 sm:py-40 bg-[#0B1220]">
+    <section id="features" className="relative py-32 sm:py-40 bg-background">
       {/* Section header */}
       <div className="max-w-4xl mx-auto px-6 text-center mb-20">
         <motion.div
@@ -79,7 +79,7 @@ export default function FeaturesSection() {
             Built for{" "}
             <span className="text-[#00C853]">traders</span>
             <br />
-            <span className="text-white/60">by traders</span>
+            <span className="text-muted">by traders</span>
           </h2>
         </motion.div>
       </div>
@@ -106,10 +106,10 @@ export default function FeaturesSection() {
                   <div className={`w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center mb-4 ${feature.iconColor} group-hover:scale-110 transition-transform duration-300`}>
                     <feature.icon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-white/50 leading-relaxed">
+                  <p className="text-sm text-muted leading-relaxed">
                     {feature.description}
                   </p>
                 </div>

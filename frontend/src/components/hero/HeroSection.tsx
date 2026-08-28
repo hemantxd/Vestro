@@ -69,7 +69,7 @@ export default function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex items-center overflow-hidden bg-[#0B1220]"
+      className="relative min-h-screen flex items-center overflow-hidden bg-background"
     >
       {/* Parallax Background Grid */}
       <motion.div
@@ -127,7 +127,7 @@ export default function HeroSection() {
               transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-4"
             >
-              <span className="text-white">The Social Network</span>
+              <span className="text-foreground">The Social Network</span>
               <br />
               <span className="text-[#00C853]">for Traders</span>
             </motion.h1>
@@ -137,7 +137,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.35, ease: [0.25, 0.4, 0.25, 1] }}
-              className="text-lg sm:text-xl text-white/50 max-w-md mx-auto lg:mx-0 mb-8 leading-relaxed"
+              className="text-lg sm:text-xl text-muted max-w-md mx-auto lg:mx-0 mb-8 leading-relaxed"
             >
               Share ideas. Build conviction. Learn from real investors.
             </motion.p>
@@ -171,7 +171,7 @@ export default function HeroSection() {
               </a>
               <a
                 href="#vision"
-                className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-white/20 text-white/80 hover:text-white hover:border-white/40 text-sm font-medium transition-all duration-200"
+                className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-line text-foreground hover:text-foreground hover:border-white/40 text-sm font-medium transition-all duration-200"
               >
                 Explore Vision
                 <svg
@@ -193,7 +193,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.65, ease: [0.25, 0.4, 0.25, 1] }}
-              className="mt-8 flex items-center gap-4 justify-center lg:justify-start text-xs text-white/30"
+              className="mt-8 flex items-center gap-4 justify-center lg:justify-start text-xs text-muted-2"
             >
               <div className="flex -space-x-2">
                 {[
@@ -215,7 +215,7 @@ export default function HeroSection() {
                 ))}
               </div>
               <span>
-                <span className="text-white/60 font-semibold">500+</span> early
+                <span className="text-muted font-semibold">500+</span> early
                 traders joined
               </span>
             </motion.div>
@@ -244,13 +244,13 @@ export default function HeroSection() {
         transition={{ delay: 2 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
-        <span className="text-[10px] text-white/20 uppercase tracking-[0.2em]">
+        <span className="text-[10px] text-faint uppercase tracking-[0.2em]">
           Scroll
         </span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          className="w-4 h-6 rounded-full border border-white/20 flex justify-center pt-1.5"
+          className="w-4 h-6 rounded-full border border-line flex justify-center pt-1.5"
         >
           <motion.div className="w-1 h-1.5 rounded-full bg-white/40" />
         </motion.div>

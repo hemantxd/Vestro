@@ -18,11 +18,11 @@ export default function VisionSection() {
     <section
       ref={sectionRef}
       id="vision"
-      className="relative py-40 sm:py-56 bg-[#0B1220] overflow-hidden"
+      className="relative py-40 sm:py-56 bg-background overflow-hidden"
     >
       {/* Large background text */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-        <span className="text-[12vw] font-black text-white/[0.015] leading-none tracking-tighter">
+        <span className="text-[12vw] font-black text-foreground/[0.015] leading-none tracking-tighter">
           VESTRO
         </span>
       </div>
@@ -35,12 +35,12 @@ export default function VisionSection() {
         style={{ opacity, y, scale }}
         className="relative max-w-5xl mx-auto px-6 text-center"
       >
-        <p className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight text-white">
+        <p className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight text-foreground">
           {"We're building"}
           <br />
           <span className="text-[#00C853]">{"the internet's home"}</span>
           <br />
-          <span className="text-white/80">for investors.</span>
+          <span className="text-foreground">for investors.</span>
         </p>
 
         <motion.p
@@ -48,7 +48,7 @@ export default function VisionSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="mt-8 text-lg text-white/30 max-w-lg mx-auto"
+          className="mt-8 text-lg text-muted-2 max-w-lg mx-auto"
         >
           A place where conviction meets community. Where every trade idea is a conversation starter.
         </motion.p>

@@ -70,7 +70,7 @@ function CommentItem({
         {comment.authorAvatar ? (
           <img src={comment.authorAvatar} alt="" className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-white/30">
+          <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-muted-2">
             {comment.authorUsername[0].toUpperCase()}
           </div>
         )}
@@ -78,24 +78,24 @@ function CommentItem({
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <div className="rounded-lg bg-white/[0.03] border border-white/5 px-3 py-2">
+        <div className="rounded-lg bg-white/[0.03] border border-line-soft px-3 py-2">
           <Link href={`/profile/${comment.authorUsername}`} className="block">
-            <p className="text-xs font-semibold text-white truncate">
+            <p className="text-xs font-semibold text-foreground truncate">
               {comment.authorDisplayName || comment.authorUsername}
-              <span className="text-white/40 font-normal"> @{comment.authorUsername}</span>
+              <span className="text-muted-2 font-normal"> @{comment.authorUsername}</span>
             </p>
           </Link>
-          <p className="text-sm text-white/80 leading-relaxed whitespace-pre-line mt-0.5">
+          <p className="text-sm text-foreground leading-relaxed whitespace-pre-line mt-0.5">
             {comment.text}
           </p>
         </div>
 
         <div className="flex items-center gap-3 mt-1 px-1">
-          <span className="text-[10px] text-white/30">{formatRelativeTime(comment.createdAt)}</span>
+          <span className="text-[10px] text-muted-2">{formatRelativeTime(comment.createdAt)}</span>
           {!isReply && (
             <button
               onClick={() => onReply(comment.id, comment.authorUsername)}
-              className="text-[10px] font-semibold text-white/40 hover:text-[#00C853] transition-colors"
+              className="text-[10px] font-semibold text-muted-2 hover:text-[#00C853] transition-colors"
             >
               Reply
             </button>
@@ -103,7 +103,7 @@ function CommentItem({
           <button
             onClick={handleLike}
             aria-label={liked ? "Unlike comment" : "Like comment"}
-            className={`transition-colors ${liked ? "text-red-500" : "text-white/30 hover:text-red-400"}`}
+            className={`transition-colors ${liked ? "text-red-500" : "text-muted-2 hover:text-red-400"}`}
           >
             <svg width="11" height="11" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
               <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />
@@ -114,7 +114,7 @@ function CommentItem({
             disabled={likeCount === 0}
             aria-label="View comment likers"
             className={`text-[10px] transition-colors disabled:cursor-default ${
-              likeCount > 0 ? "text-white/40 hover:text-[#00C853]" : "text-white/20"
+              likeCount > 0 ? "text-muted-2 hover:text-[#00C853]" : "text-faint"
             }`}
           >
             {likeCount}
@@ -123,7 +123,7 @@ function CommentItem({
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="text-[10px] font-semibold text-white/20 hover:text-red-400 transition-colors disabled:opacity-40"
+              className="text-[10px] font-semibold text-faint hover:text-red-400 transition-colors disabled:opacity-40"
             >
               {deleting ? "..." : "Delete"}
             </button>
@@ -234,9 +234,9 @@ export default function CommentSection({ postId, onCommentsCountChange }: Commen
     <div className="mt-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-white">Comments</h2>
+        <h2 className="text-sm font-semibold text-foreground">Comments</h2>
         {comments.length > 0 && (
-          <span className="text-xs text-white/40">{comments.length}</span>
+          <span className="text-xs text-muted-2">{comments.length}</span>
         )}
       </div>
 
@@ -247,7 +247,7 @@ export default function CommentSection({ postId, onCommentsCountChange }: Commen
             {user?.avatar ? (
               <img src={user.avatar} alt="" className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-white/30">
+              <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-muted-2">
                 {user?.username?.[0]?.toUpperCase() || "?"}
               </div>
             )}
@@ -255,12 +255,12 @@ export default function CommentSection({ postId, onCommentsCountChange }: Commen
           <div className="flex-1">
             {replyTo && (
               <div className="flex items-center gap-2 mb-1.5 text-[11px]">
-                <span className="text-white/40">
+                <span className="text-muted-2">
                   Replying to <span className="text-[#00C853]">@{replyTo.username}</span>
                 </span>
                 <button
                   onClick={() => setReplyTo(null)}
-                  className="text-white/30 hover:text-white transition-colors"
+                  className="text-muted-2 hover:text-foreground transition-colors"
                   aria-label="Cancel reply"
                 >
                   &times;
@@ -272,7 +272,7 @@ export default function CommentSection({ postId, onCommentsCountChange }: Commen
               onChange={(e) => setText(e.target.value)}
               placeholder={replyTo ? `Reply to @${replyTo.username}...` : "Add a comment..."}
               rows={2}
-              className="w-full resize-none rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm p-2.5 focus:outline-none focus:border-[#00C853]/50 transition-colors"
+              className="w-full resize-none rounded-lg bg-white/5 border border-line text-foreground placeholder:text-muted-2 text-sm p-2.5 focus:outline-none focus:border-[#00C853]/50 transition-colors"
             />
             {error && <p className="text-[11px] text-red-400 mt-1">{error}</p>}
             <div className="flex justify-end mt-1.5">
@@ -294,7 +294,7 @@ export default function CommentSection({ postId, onCommentsCountChange }: Commen
           <div className="w-6 h-6 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : comments.length === 0 ? (
-        <p className="text-center text-white/30 text-sm py-6">No comments yet. Be the first!</p>
+        <p className="text-center text-muted-2 text-sm py-6">No comments yet. Be the first!</p>
       ) : (
         <div className="space-y-4">
           {comments.map((comment) => (

@@ -59,7 +59,7 @@ export default function TradersToFollow({
 
   if (loading) {
     return (
-      <div className="mb-6 p-4 rounded-xl bg-white/[0.02] border border-white/5">
+      <div className="mb-6 p-4 rounded-xl bg-white/[0.02] border border-line-soft">
         <div className="flex justify-center py-2">
           <div className="w-5 h-5 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
         </div>
@@ -72,7 +72,7 @@ export default function TradersToFollow({
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-semibold text-white/50">{title}</p>
+        <p className="text-xs font-semibold text-muted">{title}</p>
         <Link
           href="/explore"
           className="text-[10px] font-semibold text-[#00C853] hover:text-[#00E060] transition-colors"
@@ -94,14 +94,14 @@ export default function TradersToFollow({
               {u.avatar ? (
                 <img src={u.avatar} alt="" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-xs font-bold text-white/30">
+                <div className="w-full h-full flex items-center justify-center text-xs font-bold text-muted-2">
                   {u.username[0].toUpperCase()}
                 </div>
               )}
             </Link>
 
             <Link href={`/profile/${u.username}`} className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-white truncate">
+              <p className="text-xs font-semibold text-foreground truncate">
                 {u.displayName || u.username}
                 {u.verified && (
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="#00C853" className="inline-block ml-1">
@@ -109,7 +109,7 @@ export default function TradersToFollow({
                   </svg>
                 )}
               </p>
-              <p className="text-[10px] text-white/30 truncate">@{u.username}</p>
+              <p className="text-[10px] text-muted-2 truncate">@{u.username}</p>
             </Link>
 
             <button

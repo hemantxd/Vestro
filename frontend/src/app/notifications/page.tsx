@@ -95,13 +95,13 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1220]">
+    <div className="min-h-screen bg-background">
       <AppNavbar />
 
       <div className="pt-14 max-w-[600px] mx-auto px-4 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-xl font-bold text-white">Notifications</h1>
+          <h1 className="text-xl font-bold text-foreground">Notifications</h1>
           {notifications.length > 0 && (
             <button
               onClick={handleMarkAll}
@@ -117,12 +117,12 @@ export default function NotificationsPage() {
             <div className="w-8 h-8 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : error && notifications.length === 0 ? (
-          <div className="p-6 rounded-xl bg-white/[0.02] border border-white/5 text-center">
+          <div className="p-6 rounded-xl bg-white/[0.02] border border-line-soft text-center">
             <p className="text-sm text-red-400">{error}</p>
           </div>
         ) : notifications.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="text-white/30 text-sm">No notifications yet.</p>
+            <p className="text-muted-2 text-sm">No notifications yet.</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -131,7 +131,7 @@ export default function NotificationsPage() {
                 key={n.id}
                 className={`flex items-start gap-3 p-3 rounded-xl border transition-colors cursor-pointer ${
                   n.read
-                    ? "bg-white/[0.02] border-white/5"
+                    ? "bg-white/[0.02] border-line-soft"
                     : "bg-[#00C853]/[0.04] border-[#00C853]/20"
                 }`}
                 onClick={() => handleOpen(n)}
@@ -145,7 +145,7 @@ export default function NotificationsPage() {
                   {n.actorAvatar ? (
                     <img src={n.actorAvatar} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-sm font-bold text-white/30">
+                    <div className="w-full h-full flex items-center justify-center text-sm font-bold text-muted-2">
                       {n.actorUsername[0].toUpperCase()}
                     </div>
                   )}
@@ -154,16 +154,16 @@ export default function NotificationsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-sm" aria-hidden>{TYPE_ICON[n.type]}</span>
-                    <span className="text-[10px] font-semibold text-white/40">{TYPE_LABEL[n.type]}</span>
+                    <span className="text-[10px] font-semibold text-muted-2">{TYPE_LABEL[n.type]}</span>
                     {!n.read && <span className="w-2 h-2 rounded-full bg-[#00C853] flex-shrink-0" />}
                   </div>
-                  <p className="text-sm text-white/80 leading-snug mt-0.5">
-                    <Link href={`/profile/${n.actorUsername}`} className="font-semibold text-white hover:underline">
+                  <p className="text-sm text-foreground leading-snug mt-0.5">
+                    <Link href={`/profile/${n.actorUsername}`} className="font-semibold text-foreground hover:underline">
                       {n.actorDisplayName || n.actorUsername}
                     </Link>{" "}
-                    <span className="text-white/70">{n.message || ""}</span>
+                    <span className="text-muted">{n.message || ""}</span>
                   </p>
-                  <p className="text-[10px] text-white/30 mt-1">{formatRelativeTime(n.createdAt)}</p>
+                  <p className="text-[10px] text-muted-2 mt-1">{formatRelativeTime(n.createdAt)}</p>
                 </div>
 
                 <button
@@ -171,7 +171,7 @@ export default function NotificationsPage() {
                     e.stopPropagation();
                     handleDelete(n.id);
                   }}
-                  className="text-white/20 hover:text-red-400 transition-colors flex-shrink-0 self-center"
+                  className="text-faint hover:text-red-400 transition-colors flex-shrink-0 self-center"
                   aria-label="Delete notification"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

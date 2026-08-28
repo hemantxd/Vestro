@@ -29,7 +29,7 @@ export default function Navbar() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-[#0B1220]/80 backdrop-blur-xl border-b border-[#00C853]/10"
+          ? "bg-background/80 backdrop-blur-xl border-b border-[#00C853]/10"
           : "bg-transparent"
       }`}
     >
@@ -54,7 +54,7 @@ export default function Navbar() {
             <path d="M220 360 L345 120 L300 100 L405 40 L410 165 L370 140 L270 360 Z" fill="url(#navLogo)" />
           </svg>
           <span className="text-lg font-bold tracking-tight">
-            <span className="text-white">VES</span>
+            <span className="text-foreground">VES</span>
             <span className="text-[#00C853]">TRO</span>
           </span>
         </Link>
@@ -65,7 +65,7 @@ export default function Navbar() {
             <a
               key={item.label}
               href={item.href}
-              className="text-sm text-white/60 hover:text-white transition-colors duration-200"
+              className="text-sm text-muted hover:text-foreground transition-colors duration-200"
             >
               {item.label}
             </a>
@@ -80,13 +80,13 @@ export default function Navbar() {
             <>
               <Link
                 href={`/profile/${user.username}`}
-                className="text-sm text-white/60 hover:text-white transition-colors duration-200"
+                className="text-sm text-muted hover:text-foreground transition-colors duration-200"
               >
                 {user.displayName || user.username}
               </Link>
               <button
                 onClick={logout}
-                className="text-sm font-medium px-4 py-2 rounded-full border border-white/20 text-white/80 hover:text-white hover:border-white/40 transition-all duration-200"
+                className="text-sm font-medium px-4 py-2 rounded-full border border-line text-foreground hover:text-foreground hover:border-white/40 transition-all duration-200"
               >
                 Logout
               </button>
@@ -95,7 +95,7 @@ export default function Navbar() {
             <>
               <Link
                 href="/login"
-                className="text-sm text-white/60 hover:text-white transition-colors duration-200"
+                className="text-sm text-muted hover:text-foreground transition-colors duration-200"
               >
                 Login
               </Link>

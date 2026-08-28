@@ -43,13 +43,13 @@ export default function FollowListModal({
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md bg-[#0D1525] border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-md bg-surface border border-line rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
-          <h2 className="text-sm font-semibold text-white">{title}</h2>
+        <div className="flex items-center justify-between px-5 py-3 border-b border-line-soft">
+          <h2 className="text-sm font-semibold text-foreground">{title}</h2>
           <button
             onClick={onClose}
-            className="text-white/40 hover:text-white transition-colors"
+            className="text-muted-2 hover:text-foreground transition-colors"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 6 6 18" />
@@ -67,7 +67,7 @@ export default function FollowListModal({
           ) : error ? (
             <p className="text-center text-red-400 text-sm py-10">{error}</p>
           ) : users.length === 0 ? (
-            <p className="text-center text-white/30 text-sm py-10">
+            <p className="text-center text-muted-2 text-sm py-10">
               No {type === "followers" ? "followers" : "following"} yet
             </p>
           ) : (
@@ -79,16 +79,16 @@ export default function FollowListModal({
                       {u.avatar ? (
                         <img src={u.avatar} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-sm font-bold text-white/30">
+                        <div className="w-full h-full flex items-center justify-center text-sm font-bold text-muted-2">
                           {u.username[0].toUpperCase()}
                         </div>
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-white truncate">
+                      <p className="text-sm font-semibold text-foreground truncate">
                         {u.displayName || u.username}
                       </p>
-                      <p className="text-xs text-white/40 truncate">
+                      <p className="text-xs text-muted-2 truncate">
                         @{u.username}
                         {u.isFollowingBack ? " · Follows you" : ""}
                       </p>

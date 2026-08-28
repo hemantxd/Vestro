@@ -47,7 +47,7 @@ const traders = [
 
 export default function CommunitySection() {
   return (
-    <section id="community" className="relative py-32 sm:py-40 bg-[#0B1220]">
+    <section id="community" className="relative py-32 sm:py-40 bg-background">
       {/* Section header */}
       <div className="max-w-4xl mx-auto px-6 text-center mb-20">
         <motion.div
@@ -63,7 +63,7 @@ export default function CommunitySection() {
             Meet your{" "}
             <span className="text-[#00C853]">community</span>
           </h2>
-          <p className="text-white/50 text-lg mt-4 max-w-xl mx-auto">
+          <p className="text-muted text-lg mt-4 max-w-xl mx-auto">
             Connect with traders who share their process, not just their P&L.
           </p>
         </motion.div>
@@ -81,7 +81,7 @@ export default function CommunitySection() {
               transition={{ delay: i * 0.1, duration: 0.5 }}
               className="group relative"
             >
-              <div className="relative bg-[#0D1525]/80 border border-white/5 rounded-2xl p-6 transition-all duration-500 hover:border-[#00C853]/20 hover:shadow-lg hover:shadow-[#00C853]/5">
+              <div className="relative bg-surface/80 border border-line-soft rounded-2xl p-6 transition-all duration-500 hover:border-[#00C853]/20 hover:shadow-lg hover:shadow-[#00C853]/5">
                 {/* Card Header */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden ring-2 ring-white/10">
@@ -89,22 +89,22 @@ export default function CommunitySection() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-white">@{trader.username}</p>
+                      <p className="text-sm font-semibold text-foreground">@{trader.username}</p>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded ${trader.bg} ${trader.color} font-medium`}>
                         {trader.ticker}
                       </span>
                     </div>
-                    <p className="text-xs text-white/40">{trader.role} · {trader.followers} followers</p>
+                    <p className="text-xs text-muted-2">{trader.role} · {trader.followers} followers</p>
                   </div>
                 </div>
 
                 {/* Post */}
-                <p className="text-sm text-white/70 leading-relaxed mb-4">
+                <p className="text-sm text-muted leading-relaxed mb-4">
                   &ldquo;{trader.post}&rdquo;
                 </p>
 
                 {/* Actions */}
-                <div className="flex items-center gap-4 text-xs text-white/30">
+                <div className="flex items-center gap-4 text-xs text-muted-2">
                   <span className="flex items-center gap-1 hover:text-[#00C853] transition-colors cursor-pointer">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />

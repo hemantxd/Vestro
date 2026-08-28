@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/5 bg-[#0B1220]">
+    <footer className="relative border-t border-line-soft bg-background">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
@@ -27,21 +27,21 @@ export default function Footer() {
               <path d="M220 360 L345 120 L300 100 L405 40 L410 165 L370 140 L270 360 Z" fill="url(#footerLogo)" />
             </svg>
             <span className="text-sm font-bold tracking-tight">
-              <span className="text-white">VES</span>
+              <span className="text-foreground">VES</span>
               <span className="text-[#00C853]">TRO</span>
             </span>
           </Link>
 
           {/* Links */}
           <div className="flex items-center gap-6">
-            <a href="#features" className="text-xs text-white/40 hover:text-white/60 transition-colors">Features</a>
-            <a href="#community" className="text-xs text-white/40 hover:text-white/60 transition-colors">Community</a>
-            <a href="#vision" className="text-xs text-white/40 hover:text-white/60 transition-colors">Vision</a>
-            <a href="https://github.com/hemantxd/Vestro" className="text-xs text-white/40 hover:text-white/60 transition-colors">GitHub</a>
+            <a href="#features" className="text-xs text-muted-2 hover:text-muted transition-colors">Features</a>
+            <a href="#community" className="text-xs text-muted-2 hover:text-muted transition-colors">Community</a>
+            <a href="#vision" className="text-xs text-muted-2 hover:text-muted transition-colors">Vision</a>
+            <a href="https://github.com/hemantxd/Vestro" className="text-xs text-muted-2 hover:text-muted transition-colors">GitHub</a>
           </div>
 
           {/* Copyright */}
-          <p className="text-xs text-white/20">
+          <p className="text-xs text-faint">
             &copy; {new Date().getFullYear()} Vestro. All rights reserved.
           </p>
         </div>

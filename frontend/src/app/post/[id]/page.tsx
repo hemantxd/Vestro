@@ -46,7 +46,7 @@ export default function PostPage() {
   }, [postId]);
 
   return (
-    <div className="min-h-screen bg-[#0B1220]">
+    <div className="min-h-screen bg-background">
       {/* Shared Navbar */}
       <AppNavbar />
 
@@ -56,9 +56,9 @@ export default function PostPage() {
             <div className="w-8 h-8 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : error || !post ? (
-          <div className="p-6 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-            <p className="text-lg font-semibold text-white mb-2">Post not found</p>
-            <p className="text-sm text-white/50 mb-6">{error || "This post doesn't exist or was removed."}</p>
+          <div className="p-6 rounded-xl bg-white/[0.02] border border-line-soft text-center">
+            <p className="text-lg font-semibold text-foreground mb-2">Post not found</p>
+            <p className="text-sm text-muted mb-6">{error || "This post doesn't exist or was removed."}</p>
             <button
               onClick={() => router.push("/home")}
               className="text-[#00C853] hover:text-[#00E060] transition-colors text-sm font-semibold"
@@ -75,7 +75,7 @@ export default function PostPage() {
                 setError("Post deleted.");
               }}
             />
-            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 mt-4">
+            <div className="p-4 rounded-xl bg-white/[0.02] border border-line-soft mt-4">
               <CommentSection
                 postId={post.id}
                 onCommentsCountChange={handleCommentsCountChange}
@@ -85,7 +85,7 @@ export default function PostPage() {
         )}
 
         <div className="mt-6 text-center">
-          <Link href="/home" className="text-xs font-semibold text-white/40 hover:text-[#00C853] transition-colors">
+          <Link href="/home" className="text-xs font-semibold text-muted-2 hover:text-[#00C853] transition-colors">
             &larr; Back to feed
           </Link>
         </div>

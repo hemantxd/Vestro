@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function HeroPage() {
   return (
-    <main className="min-h-screen bg-[#0B1220] overflow-x-hidden">
+    <main className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
       <HeroSection />
     </main>

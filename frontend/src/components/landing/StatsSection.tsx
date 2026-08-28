@@ -18,7 +18,7 @@ function AnimatedCounter({ end, suffix = "", label }: { end: number; suffix?: st
         <motion.span>{rounded}</motion.span>
         <span>{suffix}</span>
       </motion.div>
-      <p className="text-sm sm:text-base text-white/50 mt-2">{label}</p>
+      <p className="text-sm sm:text-base text-muted mt-2">{label}</p>
     </div>
   );
 }
@@ -36,7 +36,7 @@ export default function StatsSection() {
     <section
       ref={sectionRef}
       id="stats"
-      className="relative py-24 sm:py-32 bg-[#0B1220] border-y border-white/5"
+      className="relative py-24 sm:py-32 bg-background border-y border-line-soft"
     >
       <div className="max-w-6xl mx-auto px-6">
         <motion.div style={{ opacity, y }} className="grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-8">

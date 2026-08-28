@@ -69,7 +69,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0B1220] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -77,10 +77,10 @@ export default function ProfilePage() {
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen bg-[#0B1220] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-background flex items-center justify-center px-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-2">User not found</h1>
-          <p className="text-white/50 mb-6">{error || "This user doesn't exist."}</p>
+          <h1 className="text-2xl font-bold text-foreground mb-2">User not found</h1>
+          <p className="text-muted mb-6">{error || "This user doesn't exist."}</p>
           <Link href="/" className="text-[#00C853] hover:underline text-sm">
             Back to home
           </Link>
@@ -90,7 +90,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B1220]">
+    <div className="min-h-screen bg-background">
       {/* Shared Navbar */}
       <AppNavbar />
 
@@ -117,14 +117,14 @@ export default function ProfilePage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-white/30">
+                <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-muted-2">
                   {profile.username[0].toUpperCase()}
                 </div>
               )}
             </div>
             <div className="pb-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-bold text-white">
+                <h1 className="text-xl sm:text-2xl font-bold text-foreground">
                   {profile.displayName || profile.username}
                 </h1>
                 {profile.verified && (
@@ -133,7 +133,7 @@ export default function ProfilePage() {
                   </svg>
                 )}
               </div>
-              <p className="text-sm text-white/40">@{profile.username}</p>
+              <p className="text-sm text-muted-2">@{profile.username}</p>
             </div>
           </div>
 
@@ -141,7 +141,7 @@ export default function ProfilePage() {
             {isOwnProfile ? (
               <Link
                 href="/settings/profile"
-                className="px-4 py-2 rounded-lg border border-white/20 text-white/80 hover:text-white hover:border-white/40 text-sm font-medium transition-all duration-200"
+                className="px-4 py-2 rounded-lg border border-line text-foreground hover:text-foreground hover:border-white/40 text-sm font-medium transition-all duration-200"
               >
                 Edit Profile
               </Link>
@@ -151,7 +151,7 @@ export default function ProfilePage() {
                 disabled={followLoading}
                 className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
                   isFollowing
-                    ? "border border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                    ? "border border-line text-foreground hover:text-foreground hover:border-white/40"
                     : "bg-[#00C853] text-[#0B1220] hover:bg-[#00E060] shadow-lg shadow-[#00C853]/20"
                 }`}
               >
@@ -168,9 +168,9 @@ export default function ProfilePage() {
         {/* Bio & Info */}
         <div className="mb-6">
           {profile.bio && (
-            <p className="text-sm text-white/70 leading-relaxed mb-3">{profile.bio}</p>
+            <p className="text-sm text-muted leading-relaxed mb-3">{profile.bio}</p>
           )}
-          <div className="flex items-center gap-4 text-xs text-white/40">
+          <div className="flex items-center gap-4 text-xs text-muted-2">
             {profile.location && (
               <span className="flex items-center gap-1">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -190,24 +190,24 @@ export default function ProfilePage() {
         </div>
 
         {/* Stats — Instagram style, clickable */}
-        <div className="flex items-center gap-8 pb-8 border-b border-white/5">
+        <div className="flex items-center gap-8 pb-8 border-b border-line-soft">
           <div className="text-center">
-            <p className="text-sm font-semibold text-white">{profile.postsCount}</p>
-            <p className="text-xs text-white/40">Posts</p>
+            <p className="text-sm font-semibold text-foreground">{profile.postsCount}</p>
+            <p className="text-xs text-muted-2">Posts</p>
           </div>
           <button
             onClick={() => setModalOpen("followers")}
             className="text-center hover:opacity-70 transition-opacity"
           >
-            <p className="text-sm font-semibold text-white">{profile.followersCount}</p>
-            <p className="text-xs text-white/40">Followers</p>
+            <p className="text-sm font-semibold text-foreground">{profile.followersCount}</p>
+            <p className="text-xs text-muted-2">Followers</p>
           </button>
           <button
             onClick={() => setModalOpen("following")}
             className="text-center hover:opacity-70 transition-opacity"
           >
-            <p className="text-sm font-semibold text-white">{profile.followingCount}</p>
-            <p className="text-xs text-white/40">Following</p>
+            <p className="text-sm font-semibold text-foreground">{profile.followingCount}</p>
+            <p className="text-xs text-muted-2">Following</p>
           </button>
         </div>
 
@@ -268,7 +268,7 @@ function UserPosts({
   if (posts.length === 0) {
     return (
       <div className="py-12 text-center">
-        <p className="text-sm text-white/30">
+        <p className="text-sm text-muted-2">
           {isOwnProfile ? "You haven't posted anything yet." : "No posts yet."}
         </p>
       </div>

@@ -163,19 +163,19 @@ export default function PostComposer({ onCreated }: PostComposerProps) {
   };
 
   return (
-    <div className="mb-6 p-4 rounded-xl bg-white/[0.02] border border-white/5">
+    <div className="mb-6 p-4 rounded-xl bg-white/[0.02] border border-line-soft">
       {/* Composer header */}
       <div className="flex items-center gap-3 mb-3">
         <div className="w-9 h-9 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
           {user?.avatar ? (
             <img src={user.avatar} alt="" className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-sm font-bold text-white/30">
+            <div className="w-full h-full flex items-center justify-center text-sm font-bold text-muted-2">
               {user?.username?.[0]?.toUpperCase() || "?"}
             </div>
           )}
         </div>
-        <p className="text-xs font-semibold text-white">
+        <p className="text-xs font-semibold text-foreground">
           Share a trade idea with the community
         </p>
       </div>
@@ -186,22 +186,22 @@ export default function PostComposer({ onCreated }: PostComposerProps) {
         onChange={(e) => setText(e.target.value)}
         placeholder="What's on your mind? Add tickers below, mention traders with @username"
         rows={3}
-        className="w-full resize-none bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
+        className="w-full resize-none bg-transparent text-sm text-foreground placeholder:text-muted-2 focus:outline-none"
       />
 
       {/* Currency + Tickers */}
-      <div className="mt-2 p-3 rounded-lg bg-white/[0.02] border border-white/5">
+      <div className="mt-2 p-3 rounded-lg bg-white/[0.02] border border-line-soft">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-[10px] font-semibold text-white/40 uppercase tracking-wider">
+          <span className="text-[10px] font-semibold text-muted-2 uppercase tracking-wider">
             Currency
           </span>
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
-            className="rounded-lg bg-white/5 border border-white/10 text-white text-xs py-1.5 px-2 focus:outline-none focus:border-[#00C853]/50 transition-colors"
+            className="rounded-lg bg-white/5 border border-line text-foreground text-xs py-1.5 px-2 focus:outline-none focus:border-[#00C853]/50 transition-colors"
           >
             {CURRENCIES.map((c) => (
-              <option key={c.code} value={c.code} className="bg-[#0D1525]">
+              <option key={c.code} value={c.code} className="bg-surface">
                 {c.symbol} {c.code} — {c.name}
               </option>
             ))}
@@ -209,7 +209,7 @@ export default function PostComposer({ onCreated }: PostComposerProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold text-white/40 uppercase tracking-wider">
+          <span className="text-[10px] font-semibold text-muted-2 uppercase tracking-wider">
             Tickers
           </span>
           <div className="flex flex-wrap items-center gap-1.5 flex-1">
@@ -240,12 +240,12 @@ export default function PostComposer({ onCreated }: PostComposerProps) {
                 onBlur={handleTickerBlur}
                 placeholder={tickers.length === 0 ? "AAPL, TSLA, ..." : "Add more"}
                 maxLength={20}
-                className="w-28 bg-transparent text-xs text-white placeholder:text-white/30 uppercase focus:outline-none"
+                className="w-28 bg-transparent text-xs text-foreground placeholder:text-muted-2 uppercase focus:outline-none"
               />
             )}
           </div>
         </div>
-        <p className="mt-1.5 text-[10px] text-white/20">
+        <p className="mt-1.5 text-[10px] text-faint">
           Type a ticker and press Enter (no $ symbol needed — currency is picked above).
         </p>
       </div>
@@ -261,7 +261,7 @@ export default function PostComposer({ onCreated }: PostComposerProps) {
               )}
               <button
                 onClick={() => removeMedia(i)}
-                className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#0B1220] border border-white/20 text-white/70 hover:text-white hover:border-red-400 transition-colors flex items-center justify-center"
+                className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-background border border-line text-muted hover:text-foreground hover:border-red-400 transition-colors flex items-center justify-center"
                 aria-label="Remove media"
               >
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
@@ -277,7 +277,7 @@ export default function PostComposer({ onCreated }: PostComposerProps) {
       {error && <p className="mt-2 text-[11px] text-red-400">{error}</p>}
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-line-soft">
         <button
           onClick={() => fileInputRef.current?.click()}
           className="flex items-center gap-1.5 text-xs font-semibold text-[#00C853] hover:text-[#00E060] transition-colors"
