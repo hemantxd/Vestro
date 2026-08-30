@@ -1,4 +1,13 @@
-import { pgTable, uuid, varchar, text, boolean, timestamp, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  varchar,
+  text,
+  boolean,
+  timestamp,
+  index,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 
 export const notifications = pgTable(
@@ -30,5 +39,13 @@ export const notifications = pgTable(
   (table) => [
     index("notif_user_idx").on(table.userId),
     index("notif_unread_idx").on(table.userId, table.read),
+    // Dedup: only ONE notification per (recipient, type, actor, entity).
+    // Follow notifications set entityId = actorId so they also dedupe.
+    uniqueIndex("notif_unique_key").on(
+      table.userId,
+      table.type,
+      table.actorId,
+      table.entityId
+    ),
   ]
 );

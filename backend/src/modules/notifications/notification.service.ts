@@ -11,6 +11,10 @@ export const notificationService = {
       userId,
       type: "follow",
       actorId,
+      // entityId = actorId so the unique dedup key is non-null (and the row
+      // still dedupes on (recipient, follow, actor)).
+      entityId: actorId,
+      entityType: "user",
       message: `${actor.username} started following you`,
     };
 

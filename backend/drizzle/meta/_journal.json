@@ -36,6 +36,13 @@
       "when": 1786749872005,
       "tag": "0004_add_otps_table",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788073448761,
+      "tag": "0005_dedupe_notifications",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import AppNavbar from "@/components/app/AppNavbar";
 import FollowListModal from "@/components/app/FollowListModal";
@@ -15,16 +15,30 @@ import type { Post } from "@/types/post";
 
 export default function ProfilePage() {
   const params = useParams();
+  const router = useRouter();
   const username = params.username as string;
   const currentUser = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState<"followers" | "following" | null>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const isOwnProfile = currentUser?.username === username;
+
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      await logout();
+      router.replace("/");
+    } catch {
+      setLoggingOut(false);
+    }
+  };
 
   useEffect(() => {
     if (!username) return;
@@ -139,12 +153,21 @@ export default function ProfilePage() {
 
           <div className="flex items-center gap-3 pb-2">
             {isOwnProfile ? (
-              <Link
-                href="/settings/profile"
-                className="px-4 py-2 rounded-lg border border-line text-foreground hover:text-foreground hover:border-white/40 text-sm font-medium transition-all duration-200"
-              >
-                Edit Profile
-              </Link>
+              <>
+                <Link
+                  href="/settings/profile"
+                  className="px-4 py-2 rounded-lg border border-line text-foreground hover:text-foreground hover:border-white/40 text-sm font-medium transition-all duration-200"
+                >
+                  Edit Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  disabled={loggingOut}
+                  className="px-4 py-2 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 hover:text-red-400 text-sm font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loggingOut ? "Logging out..." : "Log out"}
+                </button>
+              </>
             ) : (
               <button
                 onClick={handleFollowToggle}

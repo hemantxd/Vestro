@@ -16,8 +16,9 @@ export const notificationRepository = {
         entityType: input.entityType || null,
         message: input.message || null,
       })
+      .onConflictDoNothing()
       .returning();
-    return notification;
+    return notification ?? null;
   },
 
   async findByUserId(userId: string, options?: { limit?: number; page?: number }) {
