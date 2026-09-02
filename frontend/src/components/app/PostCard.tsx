@@ -106,6 +106,21 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
   const [likesCount, setLikesCount] = useState(post.likesCount);
   const [likeBusy, setLikeBusy] = useState(false);
   const [showLikers, setShowLikers] = useState(false);
+  const [prevPostId, setPrevPostId] = useState(post.id);
+
+  // When the post data changes (different post id or refreshed like status),
+  // reconcile this card's local state with the server-provided values. Done
+  // during render (references React's documented "adjust state during render"
+  // pattern) so we don't violate the set-state-in-effect rule.
+  if (post.id !== prevPostId) {
+    setPrevPostId(post.id);
+    setLiked(Boolean(post.isLiked));
+    setLikesCount(post.likesCount);
+    setLikeBusy(false);
+  } else if (post.isLiked !== liked && !likeBusy) {
+    setLiked(Boolean(post.isLiked));
+    setLikesCount(post.likesCount);
+  }
 
   const handleLike = async () => {
     if (likeBusy) return;

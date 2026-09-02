@@ -1,15 +1,15 @@
 import { Router } from "express";
 import { postController } from "./post.controller.js";
-import { authenticate } from "../../middleware/auth.middleware.js";
+import { authenticate, optionalAuth } from "../../middleware/auth.middleware.js";
 import { uploadPostMedia } from "../../middleware/upload.middleware.js";
 
 const router = Router();
 
-// Public routes
-router.get("/ticker/:ticker", postController.getPostsByTicker as any);
+// Public routes (optionalAuth so `isLiked` is computed for logged-in viewers)
+router.get("/ticker/:ticker", optionalAuth as any, postController.getPostsByTicker as any);
 router.get("/tickers/trending", postController.getTrendingTickers as any);
-router.get("/:postId", postController.getPostById as any);
-router.get("/user/:userId", postController.getUserPosts as any);
+router.get("/:postId", optionalAuth as any, postController.getPostById as any);
+router.get("/user/:userId", optionalAuth as any, postController.getUserPosts as any);
 
 // Protected routes
 router.post("/", authenticate as any, uploadPostMedia, postController.createPost as any);
