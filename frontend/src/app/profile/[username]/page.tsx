@@ -9,6 +9,7 @@ import PostCard from "@/components/app/PostCard";
 import { userApi } from "@/lib/api/user";
 import { followApi } from "@/lib/api/follow";
 import { postApi } from "@/lib/api/post";
+import { chatApi } from "@/lib/api/chat";
 import { useAuthStore } from "@/store/auth-store";
 import type { UserProfile } from "@/types/user";
 import type { Post } from "@/types/post";
@@ -78,6 +79,18 @@ export default function ProfilePage() {
       setError(err instanceof Error ? err.message : "Failed to update follow status");
     } finally {
       setFollowLoading(false);
+    }
+  };
+
+  const [messaging, setMessaging] = useState(false);
+  const handleMessage = async () => {
+    if (!profile || messaging) return;
+    setMessaging(true);
+    try {
+      const conversation = await chatApi.getOrCreateDm(profile.id);
+      router.push(`/messages/${conversation.id}`);
+    } catch {
+      setMessaging(false);
     }
   };
 
@@ -169,21 +182,30 @@ export default function ProfilePage() {
                 </button>
               </>
             ) : (
-              <button
-                onClick={handleFollowToggle}
-                disabled={followLoading}
-                className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  isFollowing
-                    ? "border border-line text-foreground hover:text-foreground hover:border-white/40"
-                    : "bg-[#00C853] text-[#0B1220] hover:bg-[#00E060] shadow-lg shadow-[#00C853]/20"
-                }`}
-              >
-                {followLoading
-                  ? "..."
-                  : isFollowing
-                  ? "Following"
-                  : "Follow"}
-              </button>
+              <>
+                <button
+                  onClick={handleMessage}
+                  disabled={messaging}
+                  className="px-5 py-2 rounded-lg border border-line text-foreground hover:border-[#00C853]/50 hover:text-[#00C853] text-sm font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {messaging ? "..." : "Message"}
+                </button>
+                <button
+                  onClick={handleFollowToggle}
+                  disabled={followLoading}
+                  className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    isFollowing
+                      ? "border border-line text-foreground hover:text-foreground hover:border-white/40"
+                      : "bg-[#00C853] text-[#0B1220] hover:bg-[#00E060] shadow-lg shadow-[#00C853]/20"
+                  }`}
+                >
+                  {followLoading
+                    ? "..."
+                    : isFollowing
+                    ? "Following"
+                    : "Follow"}
+                </button>
+              </>
             )}
           </div>
         </div>

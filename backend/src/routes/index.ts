@@ -6,6 +6,7 @@ import notificationRoutes from "../modules/notifications/notification.routes.js"
 import postRoutes from "../modules/posts/post.routes.js";
 import likeRoutes from "../modules/likes/like.routes.js";
 import commentRoutes from "../modules/comments/comment.routes.js";
+import chatRoutes from "../modules/chat/chat.routes.js";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use("/notifications", notificationRoutes);
 router.use("/posts", postRoutes);
 router.use("/likes", likeRoutes);
 router.use("/comments", commentRoutes);
+router.use("/chats", chatRoutes);
 
 export default router;

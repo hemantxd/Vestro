@@ -43,6 +43,13 @@
       "when": 1788073448761,
       "tag": "0005_dedupe_notifications",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788703989367,
+      "tag": "0006_add_chat_tables",
+      "breakpoints": true
     }
   ]
 }
