@@ -6,6 +6,9 @@ export interface AuthPayload {
 
 export interface User {
   id: string;
+  // The /auth/me payload is `{ userId, email, username }`; normalized into `id`
+  // by the auth store.
+  userId?: string;
   username: string;
   email: string;
   displayName: string | null;

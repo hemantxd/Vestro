@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import AppNavbar from "@/components/app/AppNavbar";
 import { chatApi } from "@/lib/api/chat";
+import { API_BASE_URL } from "@/constants/env";
 import { useAuthStore } from "@/store/auth-store";
 import { formatRelativeTime } from "@/components/app/PostCard";
 import type { ChatMessage, Conversation } from "@/types/chat";
@@ -49,6 +50,46 @@ export default function ConversationPage() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: "end" });
   }, [messages.length]);
+
+  // Realtime: connect to chat WebSocket and receive new messages live.
+  useEffect(() => {
+    if (!conversationId || typeof window === "undefined") return;
+
+    const token = window.localStorage.getItem("accessToken");
+    if (!token) return;
+
+    const apiBase = API_BASE_URL.replace(/\/api\/v1$/, "").replace(/^http/, "ws");
+    const wsUrl = `${apiBase}/ws?token=${encodeURIComponent(token)}`;
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ type: "subscribe", conversationIds: [conversationId] }));
+    };
+    ws.onmessage = (event) => {
+      try {
+        const payload = JSON.parse(typeof event.data === "string" ? event.data : event.data);
+        if (payload.type === "message:new" && payload.data?.conversationId === conversationId) {
+          const msg = payload.data;
+          setMessages((prev) => {
+            // Ignore my own messages echoed back by realtime — the optimistic
+            // send + REST response already render my side once. This prevents
+            // the "sent message appearing twice" bug.
+            if (msg.authorId === currentUserId) return prev;
+            if (prev.some((m) => m.id === msg.id)) return prev;
+            return [...prev, msg];
+          });
+          chatApi.markRead(conversationId).catch(() => {});
+        }
+      } catch {
+        /* ignore malformed frames */
+      }
+    };
+
+    return () => {
+      ws.close();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversationId]);
 
   const handleSend = async () => {
     const trimmed = text.trim();
@@ -131,14 +172,32 @@ export default function ConversationPage() {
             messages.map((m) => {
               const mine = m.authorId === currentUserId;
               return (
-                <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                <div key={m.id} className={`flex items-start gap-2 ${mine ? "justify-end" : "justify-start"}`}>
+                  {/* Sender avatar (not shown for own messages) */}
+                  {!mine && (
+                    <div className="w-7 h-7 rounded-full bg-foreground/10 overflow-hidden flex-shrink-0">
+                      {m.authorAvatar ? (
+                        <img src={m.authorAvatar} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-foreground/30">
+                          {(m.authorDisplayName || m.authorUsername || "?")[0]?.toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div
-                    className={`max-w-[75%] px-3.5 py-2 rounded-2xl text-sm leading-snug whitespace-pre-line ${
+                    className={`max-w-[70%] px-3.5 py-2 rounded-2xl text-sm leading-snug whitespace-pre-line ${
                       mine
                         ? "bg-[#00C853] text-[#0B1220] rounded-br-md"
                         : "bg-surface border border-line text-foreground rounded-bl-md"
                     }`}
                   >
+                    {/* Sender name for incoming (essential in groups) */}
+                    {!mine && conversation?.type === "group" && (
+                      <p className="mb-0.5 text-[11px] font-semibold text-[#00C853]">
+                        {m.authorDisplayName || m.authorUsername}
+                      </p>
+                    )}
                     {m.text}
                     <div className={`mt-0.5 text-[9px] ${mine ? "text-[#0B1220]/60" : "text-foreground/35"}`}>
                       {formatRelativeTime(m.createdAt)}

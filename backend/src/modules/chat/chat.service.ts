@@ -1,6 +1,7 @@
 import { AppError } from "../../common/errors/AppError.js";
 import { chatRepository } from "./chat.repository.js";
 import { userRepository } from "../users/user.repository.js";
+import { broadcastMessage } from "../../websocket/chat.websocket.js";
 import type {
   CreateConversationInput,
   SendMessageInput,
@@ -138,7 +139,7 @@ export const chatService = {
     });
 
     const author = await userRepository.findById(userId);
-    return {
+    const response: MessageResponse = {
       id: message.id,
       conversationId: message.conversationId,
       authorId: message.authorId,
@@ -150,6 +151,16 @@ export const chatService = {
       readAt: message.readAt,
       createdAt: message.createdAt,
     };
+
+    // Realtime: push to all members subscribed to this conversation.
+    try {
+      const members = await chatRepository.getConversationMembers(conversationId);
+      broadcastMessage(response, members.map((m) => m.id));
+    } catch {
+      // Realtime broadcast is non-blocking; if it fails, REST still works.
+    }
+
+    return response;
   },
 
   // ── Group member management ──────────────────────────────────────

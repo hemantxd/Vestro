@@ -16,6 +16,14 @@ interface AuthState {
   setUser: (user: User | null) => void;
 }
 
+// The /auth/me payload is `{ userId, email, username }`. Normalize it so every
+// consumer can use `user.id` (and keep `userId` for backwards-compat).
+function normalizeUser(raw: User | null): User | null {
+  if (!raw) return null;
+  const id = raw.userId || raw.id || "";
+  return { ...raw, id, userId: raw.userId || id };
+}
+
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isLoading: true,
@@ -29,13 +37,13 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
     try {
       const user = await authApi.getMe();
-      set({ user, isLoading: false, isAuthenticated: true });
+      set({ user: normalizeUser(user), isLoading: false, isAuthenticated: true });
     } catch {
       // Token expired - try refresh
       try {
         await authApi.refresh();
         const user = await authApi.getMe();
-        set({ user, isLoading: false, isAuthenticated: true });
+        set({ user: normalizeUser(user), isLoading: false, isAuthenticated: true });
       } catch {
         setAccessToken(null);
         set({ user: null, isLoading: false, isAuthenticated: false });
@@ -46,19 +54,19 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email: string, password: string) => {
     await authApi.login({ email, password });
     const user = await authApi.getMe();
-    set({ user, isAuthenticated: true });
+    set({ user: normalizeUser(user), isAuthenticated: true });
   },
 
   register: async (username: string, email: string, password: string, displayName?: string) => {
     await authApi.register({ username, email, password, displayName });
     const user = await authApi.getMe();
-    set({ user, isAuthenticated: true });
+    set({ user: normalizeUser(user), isAuthenticated: true });
   },
 
   googleLogin: async (idToken: string) => {
     await authApi.googleLogin(idToken);
     const user = await authApi.getMe();
-    set({ user, isAuthenticated: true });
+    set({ user: normalizeUser(user), isAuthenticated: true });
   },
 
   logout: async () => {
@@ -66,5 +74,5 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user: null, isAuthenticated: false });
   },
 
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  setUser: (user) => set({ user: normalizeUser(user), isAuthenticated: !!user }),
 }));
