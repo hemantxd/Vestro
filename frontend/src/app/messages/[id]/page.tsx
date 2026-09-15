@@ -159,7 +159,7 @@ export default function ConversationPage() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto py-4 space-y-2">
+        <div className="flex-1 overflow-y-auto px-2 py-4 space-y-2.5">
           {loading ? (
             <div className="flex justify-center py-12">
               <div className="w-6 h-6 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
@@ -186,9 +186,9 @@ export default function ConversationPage() {
                     </div>
                   )}
                   <div
-                    className={`max-w-[70%] px-3.5 py-2 rounded-2xl text-sm leading-snug whitespace-pre-line ${
+                    className={`max-w-[70%] px-3.5 py-2 rounded-2xl text-sm leading-snug whitespace-pre-line break-words ${
                       mine
-                        ? "bg-[#00C853] text-[#0B1220] rounded-br-md"
+                        ? "bg-[#00C853]/15 border border-[#00C853]/40 text-foreground rounded-br-md"
                         : "bg-surface border border-line text-foreground rounded-bl-md"
                     }`}
                   >
@@ -199,7 +199,7 @@ export default function ConversationPage() {
                       </p>
                     )}
                     {m.text}
-                    <div className={`mt-0.5 text-[9px] ${mine ? "text-[#0B1220]/60" : "text-foreground/35"}`}>
+                    <div className={`mt-0.5 text-[10px] text-foreground/40`}>
                       {formatRelativeTime(m.createdAt)}
                     </div>
                   </div>

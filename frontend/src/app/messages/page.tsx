@@ -2,15 +2,19 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import AppNavbar from "@/components/app/AppNavbar";
+import ChatCreateModal from "@/components/app/ChatCreateModal";
 import { chatApi } from "@/lib/api/chat";
 import { formatRelativeTime } from "@/components/app/PostCard";
 import type { Conversation } from "@/types/chat";
 
 export default function MessagesPage() {
+  const router = useRouter();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,7 +39,19 @@ export default function MessagesPage() {
       <AppNavbar />
 
       <div className="pt-14 max-w-[600px] mx-auto px-4 py-6">
-        <h1 className="text-xl font-bold text-foreground mb-6">Messages</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-xl font-bold text-foreground">Messages</h1>
+          <button
+            onClick={() => setShowCreate(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#00C853] text-[#0B1220] text-xs font-bold hover:brightness-110 transition"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+            New chat
+          </button>
+        </div>
 
         {loading ? (
           <div className="flex justify-center py-12">
@@ -47,9 +63,15 @@ export default function MessagesPage() {
           </div>
         ) : conversations.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="text-foreground/40 text-sm">
-              No messages yet. Go to a trader&apos;s profile and tap &quot;Message&quot; to start a chat.
+            <p className="text-foreground/40 text-sm mb-4">
+              No messages yet. Start a chat or create a group.
             </p>
+            <button
+              onClick={() => setShowCreate(true)}
+              className="px-4 py-2 rounded-xl bg-[#00C853] text-[#0B1220] text-sm font-bold hover:brightness-110 transition"
+            >
+              New chat
+            </button>
           </div>
         ) : (
           <div className="divide-y divide-line-soft">
@@ -100,6 +122,15 @@ export default function MessagesPage() {
           </div>
         )}
       </div>
+
+      <ChatCreateModal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        onCreated={(conv) => {
+          setShowCreate(false);
+          router.push(`/messages/${conv.id}`);
+        }}
+      />
     </div>
   );
 }
