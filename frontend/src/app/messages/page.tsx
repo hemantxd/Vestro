@@ -128,6 +128,10 @@ export default function MessagesPage() {
         onClose={() => setShowCreate(false)}
         onCreated={(conv) => {
           setShowCreate(false);
+          setConversations((prev) => {
+            const rest = prev.filter((c) => c.id !== conv.id);
+            return [conv, ...rest];
+          });
           router.push(`/messages/${conv.id}`);
         }}
       />

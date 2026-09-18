@@ -49,4 +49,31 @@ export const chatApi = {
       method: "POST",
     });
   },
+
+  async addMembers(id: string, participantIds: string[]): Promise<Conversation> {
+    const res = await apiRequest<{ status: string; data: Conversation }>(
+      `/chats/${id}/members`,
+      {
+        method: "POST",
+        body: JSON.stringify({ participantIds }),
+      }
+    );
+    return res.data;
+  },
+
+  async removeMember(id: string, userId: string): Promise<{ removed: boolean }> {
+    const res = await apiRequest<{ status: string; data: { removed: boolean } }>(
+      `/chats/${id}/members/${userId}`,
+      { method: "DELETE" }
+    );
+    return res.data;
+  },
+
+  async leaveGroup(id: string): Promise<{ left: boolean }> {
+    const res = await apiRequest<{ status: string; data: { left: boolean } }>(
+      `/chats/${id}/leave`,
+      { method: "POST" }
+    );
+    return res.data;
+  },
 };

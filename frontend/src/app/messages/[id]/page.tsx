@@ -7,6 +7,7 @@ import { chatApi } from "@/lib/api/chat";
 import { API_BASE_URL } from "@/constants/env";
 import { useAuthStore } from "@/store/auth-store";
 import { formatRelativeTime } from "@/components/app/PostCard";
+import GroupMembersModal from "@/components/app/GroupMembersModal";
 import type { ChatMessage, Conversation } from "@/types/chat";
 
 export default function ConversationPage() {
@@ -20,6 +21,7 @@ export default function ConversationPage() {
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
+  const [showMembers, setShowMembers] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const loadConversation = useCallback(() => {
@@ -138,7 +140,14 @@ export default function ConversationPage() {
             </svg>
           </button>
           {conversation && (
-            <div className="flex items-center gap-2.5 flex-1 min-w-0">
+            <button
+              onClick={() => {
+                if (conversation.type === "group") setShowMembers(true);
+              }}
+              className={`flex items-center gap-2.5 flex-1 min-w-0 text-left ${
+                conversation.type === "group" ? "cursor-pointer" : "cursor-default"
+              }`}
+            >
               <div className="w-8 h-8 rounded-full bg-foreground/10 overflow-hidden flex-shrink-0">
                 {conversation.avatar ? (
                   <img src={conversation.avatar} alt="" className="w-full h-full object-cover" />
@@ -148,13 +157,13 @@ export default function ConversationPage() {
                   </div>
                 )}
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-foreground truncate">{conversation.name}</p>
                 {conversation.type === "group" && (
-                  <p className="text-[10px] text-foreground/40">{conversation.participantCount} members</p>
+                  <p className="text-[10px] text-foreground/40">{conversation.participantCount} members · tap to view</p>
                 )}
               </div>
-            </div>
+            </button>
           )}
         </div>
 
@@ -234,6 +243,14 @@ export default function ConversationPage() {
           </button>
         </div>
       </div>
+      <GroupMembersModal
+        open={showMembers}
+        conversation={conversation}
+        currentUserId={currentUserId}
+        onClose={() => setShowMembers(false)}
+        onUpdated={(c) => setConversation(c)}
+        onLeft={() => router.push("/messages")}
+      />
     </div>
   );
 }
