@@ -11,7 +11,13 @@ const envSchema = z.object({
   JWT_ACCESS_EXPIRES_IN: z.string().default("15m"),
   JWT_REFRESH_EXPIRES_IN: z.string().default("30d"),
 
-  CORS_ORIGIN: z.string().default("http://localhost:3000"),
+  // Disable all rate limiting in local dev/test unless explicitly enabled:
+  // RATE_LIMIT_ENABLED=0 (default in development/test). Set to 1 in production.
+  // Any value other than "0" enables limiting (covers "1", "true", etc.).
+  RATE_LIMIT_ENABLED: z
+    .string()
+    .optional()
+    .transform((v) => (v === "0" ? 0 : 1) as 0 | 1),
 
   REDIS_URL: z.string().optional(),
 

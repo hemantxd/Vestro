@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { apiLimiter } from "../middleware/rateLimit.js";
 import authRoutes from "../modules/auth/auth.routes.js";
 import userRoutes from "../modules/users/user.routes.js";
 import followRoutes from "../modules/follows/follow.routes.js";
@@ -9,6 +10,9 @@ import commentRoutes from "../modules/comments/comment.routes.js";
 import chatRoutes from "../modules/chat/chat.routes.js";
 
 const router = Router();
+
+// Global safety net: blanket cap on all /api/v1 traffic (per IP/user).
+router.use(apiLimiter as any);
 
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
