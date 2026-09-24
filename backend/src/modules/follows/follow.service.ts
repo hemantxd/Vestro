@@ -110,4 +110,8 @@ export const followService = {
     const isFollowing = await followRepository.isFollowing(followerId, followingId);
     return { isFollowing };
   },
+
+  async getMutualFollows(viewerId: string, profileUserId: string, limit?: number) {
+    return followRepository.getMutualFollows(viewerId, profileUserId, { limit });
+  },
 };

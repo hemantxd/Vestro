@@ -14,6 +14,18 @@ export interface FollowUser {
   isFollowingBack: boolean;
 }
 
+export interface MutualUser {
+  id: string;
+  username: string;
+  displayName: string | null;
+  avatar: string | null;
+}
+
+export interface MutualFollowsResponse {
+  mutuals: MutualUser[];
+  total: number;
+}
+
 export const followApi = {
   async follow(followingId: string): Promise<void> {
     await apiRequest<{ status: string; data: unknown }>("/follows", {
@@ -45,6 +57,14 @@ export const followApi = {
   async getFollowing(userId: string, limit = 50, page = 1): Promise<FollowUser[]> {
     const res = await apiRequest<{ status: string; data: FollowUser[] }>(
       `/follows/${userId}/following?limit=${limit}&page=${page}`
+    );
+    return res.data;
+  },
+
+  // Mutuals with another user (Instagram-style "Followed by X, Y and N others").
+  async getMutualFollows(userId: string, limit = 3): Promise<MutualFollowsResponse> {
+    const res = await apiRequest<{ status: string; data: MutualFollowsResponse }>(
+      `/follows/${userId}/mutuals?limit=${limit}`
     );
     return res.data;
   },

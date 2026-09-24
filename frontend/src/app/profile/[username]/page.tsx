@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import AppNavbar from "@/components/app/AppNavbar";
 import FollowListModal from "@/components/app/FollowListModal";
+import MutualFollowersLine from "@/components/app/MutualFollowersLine";
 import PostCard from "@/components/app/PostCard";
 import { userApi } from "@/lib/api/user";
 import { followApi } from "@/lib/api/follow";
@@ -161,6 +162,7 @@ export default function ProfilePage() {
                 )}
               </div>
               <p className="text-sm text-muted-2">@{profile.username}</p>
+              {!isOwnProfile && <MutualFollowersLine profileUserId={profile.id} />}
             </div>
           </div>
 

@@ -103,4 +103,26 @@ export const followController = {
       next(error);
     }
   },
+
+  async getMutualFollows(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        res.status(401).json({ status: "error", message: "Not authenticated" });
+        return;
+      }
+
+      const userId = req.params.userId as string;
+      if (!userId) {
+        res.status(400).json({ status: "error", message: "User ID is required" });
+        return;
+      }
+
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
+
+      const mutuals = await followService.getMutualFollows(req.user.userId, userId, limit);
+      res.status(200).json({ status: "success", data: mutuals });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

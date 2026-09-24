@@ -19,3 +19,15 @@ export interface FollowerUser {
   isFollowingBack: boolean;
   followedAt: Date;
 }
+
+export interface MutualUser {
+  id: string;
+  username: string;
+  displayName: string | null;
+  avatar: string | null;
+}
+
+export interface MutualFollowsResponse {
+  mutuals: MutualUser[];
+  total: number;
+}

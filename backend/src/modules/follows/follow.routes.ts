@@ -14,5 +14,7 @@ router.post("/", writeLimiter as any, authenticate, followController.followUser)
 router.delete("/:followingId", writeLimiter as any, authenticate, followController.unfollowUser);
 router.delete("/follower/:followerId", writeLimiter as any, authenticate, followController.removeFollower);
 router.get("/:followingId/status", readLimiter as any, authenticate, followController.getFollowStatus);
+// Mutuals with this user (Instagram-style "Followed by X, Y and N others")
+router.get("/:userId/mutuals", readLimiter as any, authenticate, followController.getMutualFollows);
 
 export default router;

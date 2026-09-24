@@ -106,6 +106,69 @@ export const followRepository = {
     return row.count > 0;
   },
 
+  /**
+   * Mutual follows for the Instagram-style "Followed by X, Y and N others"
+   * line on a profile: users that BOTH `viewerId` (me) and `profileUserId`
+   * follow. Most-followed first. Also returns the total mutual count for the
+   * "and N others" part. Never includes the viewer themself.
+   */
+  async getMutualFollows(
+    viewerId: string,
+    profileUserId: string,
+    options?: { limit?: number }
+  ): Promise<{ mutuals: Array<{ id: string; username: string; displayName: string | null; avatar: string | null }>; total: number }> {
+    const limit = Math.min(Math.max(options?.limit ?? 3, 1), 10);
+
+    const rows = await db
+      .select({
+        id: users.id,
+        username: users.username,
+        displayName: users.displayName,
+        avatar: users.avatar,
+        followersCount: users.followersCount,
+      })
+      .from(follows)
+      .innerJoin(
+        sql`follows AS peer`,
+        sql`peer.following_id = follows.following_id`
+      )
+      .innerJoin(users, eq(users.id, follows.followingId))
+      .where(
+        and(
+          eq(follows.followerId, viewerId),
+          sql`peer.follower_id = ${profileUserId}`,
+          sql`follows.following_id <> ${viewerId}`
+        )
+      )
+      .orderBy(sql`users.followers_count DESC`)
+      .limit(limit);
+
+    const [countRow] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(follows)
+      .innerJoin(
+        sql`follows AS peer`,
+        sql`peer.following_id = follows.following_id`
+      )
+      .where(
+        and(
+          eq(follows.followerId, viewerId),
+          sql`peer.follower_id = ${profileUserId}`,
+          sql`follows.following_id <> ${viewerId}`
+        )
+      );
+
+    return {
+      mutuals: rows.map((r) => ({
+        id: r.id,
+        username: r.username,
+        displayName: r.displayName,
+        avatar: r.avatar,
+      })),
+      total: countRow?.count ?? 0,
+    };
+  },
+
   // Suggested "traders to follow": active users excluding yourself and
   // everyone you already follow, most-followed first.
   async getSuggestedUsers(userId: string, options?: { limit?: number }) {
